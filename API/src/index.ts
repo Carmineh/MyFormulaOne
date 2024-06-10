@@ -96,7 +96,7 @@ app.get("/api/constructors/standings/getAll", (req: Request, res: Response) => {
                 from: "constructor_standings",
                 localField: "constructorId",
                 foreignField: "constructorId",
-                as: "standings",
+                as: "standings", 
             },
         },
     ];
