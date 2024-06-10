@@ -1,0 +1,27 @@
+.centered-button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.table_arrow{
+    text-decoration: none;
+    font-weight: 700;
+    font-size: xx-large;
+    color: red;
+}
+
+.table_arrow:hover{
+    color: black;
+    cursor: pointer;
+}
+
+.profile-page__button a{
+    text-decoration: none;
+    color: red;
+}
+
+.profile-page__button a:hover{
+    text-shadow: 0.4px 0.4px rgb(0, 0, 0,0.5);
+}
