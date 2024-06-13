@@ -6,7 +6,7 @@ export default function HomePage() {
 	return (
 		<>
 			<Header />
-			<h1>HOMEPAGE</h1>
+			<h1>HOMEPAGE FORMULAONE</h1>
 		</>
 	);
 }
