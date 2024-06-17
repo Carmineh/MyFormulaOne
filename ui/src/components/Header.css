@@ -6,7 +6,18 @@
 .header-bottom {
     display: flex;
     background-color: rgb(232, 15, 0);
+
 }
+
+.line-menu{
+    width: "30px";
+    height: "25px";
+    border: 5px solid blue;
+    background-color: white;
+    margin-bottom: "5px";
+}
+
+
 .navbar-brand{
     margin-left: 200px;
 }
@@ -31,9 +42,8 @@
 }
 
 .nav-item .nav-link:hover{
-    color: #2e2e2e;
-    background-color: rgba(242, 222, 220, 0.9);
     text-decoration: none;
+    text-decoration: underline;
     font-weight: 700;
     border-radius: 15px;
 }
@@ -41,8 +51,4 @@
 .nav-item .nav-link:focus{
     color: aliceblue;
 }
-
-
-
-
 

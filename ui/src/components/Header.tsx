@@ -1,11 +1,6 @@
 import React from "react";
 import "./Header.css";
 
-/*
-	type: string => Definisce il comportamento della search-bar, in caso di valore null
-					la search-bar non verrà visualizzata
-*/
-let type: string = "";
 export default function Header() {
 	return (
 		<>
@@ -20,21 +15,6 @@ export default function Header() {
 								height="45"
 							/>
 						</a>
-						{type === "" ? null : (
-							<>
-								<form className="d-flex search-bar" role="search">
-									<input
-										className="form-control me-2"
-										type="search"
-										placeholder="Search"
-										aria-label="Search"
-									/>
-									<button className="btn btn-light" type="submit">
-										Search
-									</button>
-								</form>
-							</>
-						)}
 					</div>
 				</nav>
 

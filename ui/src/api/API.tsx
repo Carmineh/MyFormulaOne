@@ -6,7 +6,15 @@
             fetchDrivers_byId(1)
 */
 import axios from "axios";
-import { Driver, Constructor, Race, Circuit } from "../api/types";
+import {
+	Driver,
+	Constructor,
+	Race,
+	Circuit,
+	DriverPoles,
+	ConstructorsForDriver,
+	RaceLeaderboard,
+} from "../api/types";
 
 //DRIVERS API CALL
 export const fetchDrivers_byId = async (id: string): Promise<Driver> => {
@@ -65,25 +73,31 @@ export const fetchRaces_byId = async (id: string): Promise<Race> => {
 };
 
 //QUERY NEW
-export const fetchPolePosition_byId = async (id: string): Promise<Race> => {
+export const fetchPolePosition_byId = async (
+	id: string
+): Promise<DriverPoles> => {
 	const response = await axios.get(
 		"http://localhost:3001/api/results/poles/" + id
 	);
-	return response.data[0];
+	return response.data;
 };
 
-export const fetchConstructorForDriver_byId = async (id: string): Promise<Race> => {
+export const fetchConstructorForDriver_byId = async (
+	id: string
+): Promise<ConstructorsForDriver> => {
 	const response = await axios.get(
 		"http://localhost:3001/api/driver_standings/constructors/" + id
 	);
-	return response.data[0];
+	return response.data;
 };
 
-export const fetchClassification_byIdRace = async (id: string): Promise<Race> => {
+export const fetchLeaderboard_byIdRace = async (
+	id: string
+): Promise<RaceLeaderboard> => {
 	const response = await axios.get(
 		"http://localhost:3001/api/races/result/" + id
 	);
-	return response.data[0];
+	return response.data;
 };
 
 export const fetchFastestRTime_byIdRace = async (id: string): Promise<Race> => {
@@ -100,14 +114,18 @@ export const fetchFastestQTime_byIdRace = async (id: string): Promise<Race> => {
 	return response.data[0];
 };
 
-export const fetchFastestQTimeEver_byIdCircuit = async (id: string): Promise<Race> => {
+export const fetchFastestQTimeEver_byIdCircuit = async (
+	id: string
+): Promise<Race> => {
 	const response = await axios.get(
 		"http://localhost:3001/api/circuits/bestlapq3ever/" + id
 	);
 	return response.data[0];
 };
 
-export const fetchFastestRTimeEver_byIdCircuit = async (id: string): Promise<Race> => {
+export const fetchFastestRTimeEver_byIdCircuit = async (
+	id: string
+): Promise<Race> => {
 	const response = await axios.get(
 		"http://localhost:3001/api/circuits/bestlapraseever/" + id
 	);

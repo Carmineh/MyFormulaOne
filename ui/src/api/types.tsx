@@ -41,6 +41,45 @@ export interface Circuit {
 	url: string;
 }
 
+export interface DriverPoles {
+	driverId: number;
+	driverName: string;
+	totalPoles: number;
+	circuitId: number;
+	raceName: string;
+	raceDate: string;
+}
+
+export interface ConstructorsForDriver {
+	constructorId: number;
+	constructorName: string;
+	constructorNationality: string;
+}
+
+export interface RaceLeaderboard {
+	driverId: number;
+	driverName: string;
+	grandPrix: string;
+	IdGranPrix: number;
+	position: number;
+}
+
+export interface FastestRoundRace {
+	bestLapTime: string;
+	driverName: string;
+	driverId: number;
+	raceId: number;
+	fastestLap: number;
+}
+
+export interface FastestRoundQual {
+	raceId: number;
+	fastestTime: string;
+	driverName: string;
+	raceName: string;
+	data: Date;
+}
+
 export interface ImagePortraitProps {
 	url: string;
 }
