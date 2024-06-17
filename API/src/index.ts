@@ -215,20 +215,726 @@ app.get("/api/drivers/getUrl/:id", (req: Request, res: Response) => {
     });
 });
 
-// DRIVERS STANDINGS
-app.get("/api/drivers/standings/getAll", (req: Request, res: Response) => {
+// ALL POLE POSITION BY SPECIFIC DRIVER
+
+app.get("/api/results/poles/:id", async (req: Request, res: Response) => {
+    if (!req.params.id) {
+        res.send("No ID specified");
+        return;
+    }
+
+    const driverId = parseInt(req.params.id); // Qui dobbiamo passare l'id del driver
+
     const agg = [
         {
-            $lookup: {
-                from: "driver_standings",
-                localField: "driverId",
-                foreignField: "driverId",
-                as: "standings",
-            },
+            '$match': {
+                'driverId': driverId
+            }
         },
+        {
+            '$match': {
+                'grid': 1
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'races',
+                'localField': 'raceId',
+                'foreignField': 'raceId',
+                'as': 'raceDetails'
+            }
+        },
+        {
+            '$unwind': '$raceDetails'
+        },
+        {
+            '$lookup': {
+                'from': 'drivers',
+                'localField': 'driverId',
+                'foreignField': 'driverId',
+                'as': 'driverDetails'
+            }
+        },
+        {
+            '$unwind': '$driverDetails'
+        },
+        {
+            '$project': {
+                '_id': 0,
+                'raceName': '$raceDetails.name',
+                'raceDate': '$raceDetails.date',
+                'circuitId': '$raceDetails.circuitId',
+                'driverId': '$driverId',
+                'driverName': {
+                    '$concat': [
+                        '$driverDetails.forename', ' ', '$driverDetails.surname'
+                    ]
+                },
+                'grid': '$grid'
+            }
+        },
+        {
+            '$sort': {
+                'raceDate': 1
+            }
+        },
+        {
+            '$group': {
+                '_id': {
+                    'driverId': '$driverId',
+                    'driverName': '$driverName'
+                },
+                'poles': {
+                    '$push': {
+                        'raceName': '$raceName',
+                        'raceDate': '$raceDate',
+                        'circuitId': '$circuitId'
+                    }
+                },
+                'totalPoles': {
+                    '$sum': 1
+                }
+            }
+        },
+        {
+            '$unwind': {
+                'path': '$poles',
+                'includeArrayIndex': 'index',
+                'preserveNullAndEmptyArrays': true
+            }
+        },
+        {
+            '$project': {
+                '_id': 0,
+                'driverId': '$_id.driverId',
+                'driverName': '$_id.driverName',
+                'totalPoles': '$totalPoles',
+                'circuitId': '$poles.circuitId',
+                'raceName': '$poles.raceName',
+                'raceDate': '$poles.raceDate'
+            }
+        }
     ];
+    database.collection("results").aggregate(agg).toArray((error, result) => {
+        if (!error && result != null) {
+            res.send(result);
+        }
+    });
+});
 
-    database.collection("drivers").aggregate(agg).toArray((error, result) => {
+// ALL CONSCTRUCTORS BY SPECIFIC DRIVER
+
+app.get("/api/driver_standings/constructors/:id", async (req: Request, res: Response) => {
+    if (!req.params.id) {
+        res.send("No ID specified");
+        return;
+    }
+
+    const driverId = parseInt(req.params.id); // Qui dobbiamo passare l'id del driver
+
+    const agg = [
+        {
+          '$match': {
+            'driverId': driverId
+          }
+        }, {
+          '$lookup': {
+            'from': 'results', 
+            'localField': 'driverId', 
+            'foreignField': 'driverId', 
+            'as': 'driverCostruttore'
+          }
+        }, {
+          '$unwind': {
+            'path': '$driverCostruttore', 
+            'includeArrayIndex': 'index', 
+            'preserveNullAndEmptyArrays': true
+          }
+        }, {
+          '$group': {
+            '_id': '$driverCostruttore.constructorId'
+          }
+        }, {
+          '$lookup': {
+            'from': 'constructors', 
+            'localField': '_id', 
+            'foreignField': 'constructorId', 
+            'as': 'constructorDetails'
+          }
+        }, {
+          '$unwind': '$constructorDetails'
+        }, {
+          '$project': {
+            '_id': 0, 
+            'constructorId': '$_id', 
+            'constructorName': '$constructorDetails.name', 
+            'constructorNationality': '$constructorDetails.nationality'
+          }
+        }
+      ];
+    database.collection("driver_standings").aggregate(agg).toArray((error, result) => {
+        if (!error && result != null) {
+            res.send(result);
+        }
+    });
+});
+
+// Classifica a fine gara e vincitore
+
+app.get("/api/races/result/:id", async (req: Request, res: Response) => {
+    if (!req.params.id) {
+        res.send("No ID specified");
+        return;
+    }
+
+    const raceId = parseInt(req.params.id); // Qui dobbiamo passare l'id del driver
+
+    const agg = [
+        {
+          '$match': {
+            'raceId': raceId
+          }
+        }, {
+          '$lookup': {
+            'from': 'results', 
+            'localField': 'raceId', 
+            'foreignField': 'raceId', 
+            'as': 'risultati'
+          }
+        }, {
+          '$unwind': {
+            'path': '$risultati', 
+            'includeArrayIndex': 'index', 
+            'preserveNullAndEmptyArrays': true
+          }
+        }, {
+          '$lookup': {
+            'from': 'drivers', 
+            'localField': 'risultati.driverId', 
+            'foreignField': 'driverId', 
+            'as': 'nomeDriver'
+          }
+        }, {
+          '$unwind': {
+            'path': '$nomeDriver', 
+            'includeArrayIndex': 'index', 
+            'preserveNullAndEmptyArrays': true
+          }
+        }, {
+          '$sort': {
+            'risultati.position': 1
+          }
+        }, {
+          '$project': {
+            '_id': 0, 
+            'driverId': '$nomeDriver.driverId', 
+            'driverName': {
+              '$concat': [
+                '$nomeDriver.forename', ' ', '$nomeDriver.surname'
+              ]
+            }, 
+            'granPrix': '$name', 
+            'IdGranPrix': '$raceId', 
+            'position': '$risultati.position'
+          }
+        }
+      ];
+    database.collection("races").aggregate(agg).toArray((error, result) => {
+        if (!error && result != null) {
+            res.send(result);
+        }
+    });
+});
+
+// Giro più veloce in gara
+
+app.get("/api/results/bestlaprace/:id", async (req: Request, res: Response) => {
+    if (!req.params.id) {
+        res.send("No ID specified");
+        return;
+    }
+
+    const raceId = parseInt(req.params.id); // Qui dobbiamo passare l'id del driver
+
+    const agg = [
+        {
+          '$match': {
+            'raceId': raceId, 
+            'fastestLapTime': {
+              '$exists': true, 
+              '$ne': null, 
+              '$nin': [
+                '\\N'
+              ]
+            }
+          }
+        }, {
+          '$sort': {
+            'fastestLapTime': 1
+          }
+        }, {
+          '$limit': 1
+        }, {
+          '$lookup': {
+            'from': 'drivers', 
+            'localField': 'driverId', 
+            'foreignField': 'driverId', 
+            'as': 'driverDetails'
+          }
+        }, {
+          '$unwind': {
+            'path': '$driverDetails', 
+            'includeArrayIndex': 'index', 
+            'preserveNullAndEmptyArrays': true
+          }
+        }, {
+          '$project': {
+            '_id': 0, 
+            'bestLapTime': '$fastestLapTime', 
+            'driverName': {
+              '$concat': [
+                '$driverDetails.forename', ' ', '$driverDetails.surname'
+              ]
+            }, 
+            'driverId': '$driverId', 
+            'raceId': '$raceId', 
+            'fastestLap': '$fastestLap'
+          }
+        }
+      ];
+    database.collection("results").aggregate(agg).toArray((error, result) => {
+        if (!error && result != null) {
+            res.send(result);
+        }
+    });
+});
+
+// Giro più veloce in qualifica
+
+app.get("/api/qualifying/bestlap/:id", async (req: Request, res: Response) => {
+    if (!req.params.id) {
+        res.send("No ID specified");
+        return;
+    }
+
+    const raceId = parseInt(req.params.id); // Qui dobbiamo passare l'id del driver
+
+    const agg = [
+        {
+          '$match': {
+            'raceId': raceId
+          }
+        }, {
+          '$lookup': {
+            'from': 'races', 
+            'localField': 'raceId', 
+            'foreignField': 'raceId', 
+            'as': 'raceDetails'
+          }
+        }, {
+          '$unwind': {
+            'path': '$raceDetails', 
+            'includeArrayIndex': 'index', 
+            'preserveNullAndEmptyArrays': true
+          }
+        }, {
+          '$match': {
+            '$or': [
+              {
+                'q1': {
+                  '$exists': true, 
+                  '$ne': null, 
+                  '$nin': [
+                    '\\N'
+                  ]
+                }
+              }, {
+                'q2': {
+                  '$exists': true, 
+                  '$ne': null, 
+                  '$nin': [
+                    '\\N'
+                  ]
+                }
+              }, {
+                'q3': {
+                  '$exists': true, 
+                  '$ne': null, 
+                  '$nin': [
+                    '\\N'
+                  ]
+                }
+              }
+            ]
+          }
+        }, {
+          '$addFields': {
+            'best_qualifying_time': {
+              '$reduce': {
+                'input': [
+                  '$q1', '$q2', '$q3'
+                ], 
+                'initialValue': null, 
+                'in': {
+                  '$cond': {
+                    'if': {
+                      '$or': [
+                        {
+                          '$eq': [
+                            '$$value', null
+                          ]
+                        }, {
+                          '$and': [
+                            {
+                              '$ne': [
+                                '$$this', null
+                              ]
+                            }, {
+                              '$lt': [
+                                '$$this', '$$value'
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }, 
+                    'then': '$$this', 
+                    'else': '$$value'
+                  }
+                }
+              }
+            }
+          }
+        }, {
+          '$sort': {
+            'best_qualifying_time': 1
+          }
+        }, {
+          '$limit': 1
+        }, {
+          '$lookup': {
+            'from': 'drivers', 
+            'localField': 'driverId', 
+            'foreignField': 'driverId', 
+            'as': 'driverDetails'
+          }
+        }, {
+          '$unwind': '$driverDetails'
+        }, {
+          '$project': {
+            'raceId': '$raceId', 
+            'fastestQualifyingTime': '$best_qualifying_time', 
+            'driverName': {
+              '$concat': [
+                '$driverDetails.forename', ' ', '$driverDetails.surname'
+              ]
+            }, 
+            'raceName': '$raceDetails.name', 
+            'data': '$raceDetails.date'
+          }
+        }
+      ];
+    database.collection("qualifying").aggregate(agg).toArray((error, result) => {
+        if (!error && result != null) {
+            res.send(result);
+        }
+    });
+});
+
+// Giro più veloce in qualifica in assoluto per quella pista
+
+app.get("/api/circuits/bestlapq3ever/:id", async (req: Request, res: Response) => {
+    if (!req.params.id) {
+        res.send("No ID specified");
+        return;
+    }
+
+    const circuitId = parseInt(req.params.id); // Qui dobbiamo passare l'id del driver
+
+    const agg = [
+        {
+          '$match': {
+            'circuitId': circuitId
+          }
+        }, {
+          '$lookup': {
+            'from': 'races', 
+            'localField': 'circuitId', 
+            'foreignField': 'circuitId', 
+            'as': 'raceDetails'
+          }
+        }, {
+          '$unwind': '$raceDetails'
+        }, {
+          '$lookup': {
+            'from': 'qualifying', 
+            'localField': 'raceDetails.raceId', 
+            'foreignField': 'raceId', 
+            'as': 'qualifyingDetails'
+          }
+        }, {
+          '$unwind': '$qualifyingDetails'
+        }, {
+          '$match': {
+            '$or': [
+              {
+                'qualifyingDetails.q1': {
+                  '$exists': true, 
+                  '$ne': null, 
+                  '$nin': [
+                    '\\N'
+                  ]
+                }
+              }, {
+                'qualifyingDetails.q2': {
+                  '$exists': true, 
+                  '$ne': null, 
+                  '$nin': [
+                    '\\N'
+                  ]
+                }
+              }, {
+                'qualifyingDetails.q3': {
+                  '$exists': true, 
+                  '$ne': null, 
+                  '$nin': [
+                    '\\N'
+                  ]
+                }
+              }
+            ]
+          }
+        }, {
+          '$addFields': {
+            'qualifyingDetails.best_qualifying_time': {
+              '$reduce': {
+                'input': [
+                  '$qualifyingDetails.q1', '$qualifyingDetails.q2', '$qualifyingDetails.q3'
+                ], 
+                'initialValue': null, 
+                'in': {
+                  '$cond': {
+                    'if': {
+                      '$or': [
+                        {
+                          '$eq': [
+                            '$$value', null
+                          ]
+                        }, {
+                          '$and': [
+                            {
+                              '$ne': [
+                                '$$this', null
+                              ]
+                            }, {
+                              '$lt': [
+                                '$$this', '$$value'
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }, 
+                    'then': '$$this', 
+                    'else': '$$value'
+                  }
+                }
+              }
+            }
+          }
+        }, {
+          '$sort': {
+            'qualifyingDetails.best_qualifying_time': 1
+          }
+        }, {
+          '$limit': 1
+        }, {
+          '$lookup': {
+            'from': 'drivers', 
+            'localField': 'qualifyingDetails.driverId', 
+            'foreignField': 'driverId', 
+            'as': 'driverDetails'
+          }
+        }, {
+          '$unwind': '$driverDetails'
+        }, {
+          '$project': {
+            'circuitId': 1, 
+            'circuitName': '$name', 
+            'fastestQualifyingTime': {
+              '$cond': {
+                'if': {
+                  '$eq': [
+                    '$qualifyingDetails.best_qualifying_time', '$qualifyingDetails.q1_milliseconds'
+                  ]
+                }, 
+                'then': '$qualifyingDetails.q1', 
+                'else': {
+                  '$cond': {
+                    'if': {
+                      '$eq': [
+                        '$qualifyingDetails.best_qualifying_time', '$qualifyingDetails.q2_milliseconds'
+                      ]
+                    }, 
+                    'then': '$qualifyingDetails.q2', 
+                    'else': '$qualifyingDetails.q3'
+                  }
+                }
+              }
+            }, 
+            'driverName': {
+              '$concat': [
+                '$driverDetails.forename', ' ', '$driverDetails.surname'
+              ]
+            }, 
+            'raceName': '$raceDetails.name', 
+            'data': '$raceDetails.date'
+          }
+        }
+      ];
+
+    database.collection("circuits").aggregate(agg).toArray((error, result) => {
+        if (!error && result != null) {
+            res.send(result);
+        }
+    });
+});
+
+// Giro più veloce in gara in assoluto per quella pista
+
+app.get("/api/circuits/bestlapraseever/:id", async (req: Request, res: Response) => {
+    if (!req.params.id) {
+        res.send("No ID specified");
+        return;
+    }
+
+    const circuitId = parseInt(req.params.id); // Qui dobbiamo passare l'id del driver
+
+    const agg = [
+        {
+          '$match': {
+            'circuitId': circuitId
+          }
+        }, {
+          '$lookup': {
+            'from': 'races', 
+            'localField': 'circuitId', 
+            'foreignField': 'circuitId', 
+            'as': 'raceDetails'
+          }
+        }, {
+          '$unwind': '$raceDetails'
+        }, {
+          '$lookup': {
+            'from': 'results', 
+            'localField': 'raceDetails.raceId', 
+            'foreignField': 'raceId', 
+            'as': 'raceResults'
+          }
+        }, {
+          '$unwind': '$raceResults'
+        }, {
+          '$match': {
+            'raceResults.fastestLapTime': {
+              '$exists': true, 
+              '$ne': null, 
+              '$nin': [
+                'N'
+              ]
+            }
+          }
+        }, {
+          '$sort': {
+            'raceResults.fastestLapTime': 1
+          }
+        }, {
+          '$limit': 1
+        }, {
+          '$project': {
+            '_id': 0, 
+            'circuitName': '$name', 
+            'raceName': '$raceDetails.name', 
+            'date': '$raceDetails.date', 
+            'driverId': '$raceResults.driverId', 
+            'fastestLapTime': '$raceResults.fastestLapTime', 
+            'fastestLapTimeMilliseconds': '$raceResults.fastestLapTimeMilliseconds'
+          }
+        }, {
+          '$lookup': {
+            'from': 'drivers', 
+            'localField': 'driverId', 
+            'foreignField': 'driverId', 
+            'as': 'driverDetails'
+          }
+        }, {
+          '$unwind': '$driverDetails'
+        }, {
+          '$project': {
+            'circuitName': 1, 
+            'raceName': 1, 
+            'date': 1, 
+            'driverName': {
+              '$concat': [
+                '$driverDetails.forename', ' ', '$driverDetails.surname'
+              ]
+            }, 
+            'fastestLapTime': 1, 
+            'fastestLapTimeMilliseconds': 1
+          }
+        }
+      ];
+
+    database.collection("circuits").aggregate(agg).toArray((error, result) => {
+        if (!error && result != null) {
+            res.send(result);
+        }
+    });
+});
+
+// Classifica piloti con più vittorie
+
+app.get("/api/results/halloffame", async (req: Request, res: Response) => {
+
+    const agg = [
+        {
+          '$match': {
+            'position': 1
+          }
+        }, {
+          '$group': {
+            '_id': '$driverId', 
+            'winCount': {
+              '$sum': 1
+            }
+          }
+        }, {
+          '$sort': {
+            'winCount': -1
+          }
+        }, {
+          '$lookup': {
+            'from': 'drivers', 
+            'localField': '_id', 
+            'foreignField': 'driverId', 
+            'as': 'driverDetails'
+          }
+        }, {
+          '$unwind': '$driverDetails'
+        }, {
+          '$project': {
+            '_id': 0, 
+            'driverId': '$_id', 
+            'winCount': '$winCount', 
+            'driverName': {
+              '$concat': [
+                '$driverDetails.forename', ' ', '$driverDetails.surname'
+              ]
+            }
+          }
+        }
+      ];
+
+    database.collection("results").aggregate(agg).toArray((error, result) => {
         if (!error && result != null) {
             res.send(result);
         }
