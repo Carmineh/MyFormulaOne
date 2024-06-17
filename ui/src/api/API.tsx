@@ -15,7 +15,6 @@ import {
 	ConstructorsForDriver,
 	RaceLeaderboard,
 	FastestRoundRace,
-	FastestRoundQual,
 	FastestRoundQualRace,
 	FastestRoundQualCircuit,
 	FastestRoundCircuit,
