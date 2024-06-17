@@ -26,7 +26,7 @@ import Loading from "../components/Loading";
 
 export default function RacePage() {
 	const id: string = useParams().id ?? "";
-
+	const [formattedDate, setFormattedDate] = useState<string>("");
 	const [race, setRace] = useState<Race>();
 	const [circuit, setCircuit] = useState<Circuit>();
 	const [leaderboard, setLeaderboard] = useState<RaceLeaderboard[]>();
@@ -51,7 +51,6 @@ export default function RacePage() {
 				);
 				setRace(result_race);
 				setCircuit(result_circuit);
-				setLoading(false);
 			} catch (error) {
 				setError(error as Error);
 				setLoading(false);
@@ -60,10 +59,8 @@ export default function RacePage() {
 
 		const getLeaderboard = async () => {
 			try {
-				setLoading(true);
 				const result = await fetchLeaderboard_byIdRace(id);
 				setLeaderboard(result);
-				setLoading(false);
 			} catch (error) {
 				setError(error as Error);
 				setLoading(false);
@@ -72,10 +69,8 @@ export default function RacePage() {
 
 		const getFastestLapRace = async () => {
 			try {
-				setLoading(true);
 				const result = await fetchFastestRTime_byIdRace(id);
 				setFastestLapRace(result);
-				setLoading(false);
 			} catch (error) {
 				setError(error as Error);
 				setLoading(false);
@@ -94,10 +89,30 @@ export default function RacePage() {
 			}
 		};
 
+		const getFormattedDate = async () => {
+			try {
+				const result = await fetchRaces_byId(id);
+				const [year, month, day] = result.date.split("T")[0].split("-");
+
+				// Estrai l'ora e i minuti dalla stringa del tempo
+				const [hours, minutes] = result.time.split(":");
+
+				// Combina la data e l'ora nel formato desiderato
+				setFormattedDate(`${day}/${month}/${year} ${hours}:${minutes}`);
+				setLoading(false);
+			} catch (error) {
+				setError(error as Error);
+				setLoading(false);
+			}
+		};
+
 		getRace();
 		getLeaderboard();
 		getFastestLapQual();
 		getFastestLapRace();
+		getFormattedDate();
+
+		setLoading(true);
 	}, [id]);
 	if (loading)
 		return (
@@ -106,14 +121,14 @@ export default function RacePage() {
 				<Loading />
 			</>
 		);
-	if (error) return <p>{error.message}</p>;
+	// if (error) return <p>{error.message}</p>;
 	return (
 		<>
 			<Header />
 			{race && fastestLapRace && fastestLapQual && leaderboard && circuit ? (
 				<>
 					<div className="container">
-						<h1 className="centered title">{race.name + " " + race.year}</h1>
+						<h1 className="centered title">{race.name + " - " + race.year}</h1>
 
 						<table className="centered">
 							<td className="race-info_col">
@@ -123,7 +138,7 @@ export default function RacePage() {
 								<div className="race-info">
 									<div className="race-info__item">
 										<img src="/assets/date-icon.png" alt="" className="icon" />
-										<h3>{race.date + " " + race.time} </h3>
+										<h3>{formattedDate} </h3>
 									</div>
 									<div className="race-info__item">
 										<img
@@ -146,7 +161,7 @@ export default function RacePage() {
 											alt=""
 											className="icon"
 										/>
-										<h3>{circuit.location + "," + circuit.country} </h3>
+										<h3>{circuit.location + ", " + circuit.country} </h3>
 									</div>
 								</div>
 							</td>
@@ -154,12 +169,14 @@ export default function RacePage() {
 
 						<div className="page-container"></div>
 						{leaderboard ? <Table drivers={leaderboard} /> : "No data"}
+
+						{/* TODO: IMPLEMENTARE GIRO VELOCE IN GARA E QUALIFICHE (IMPOSTARE ANCHE CSS PAGINA) */}
 					</div>
 				</>
 			) : (
-				<> error</>
+				<> {error} </>
 			)}
-			{race ? (
+			{/* {race ? (
 				<>
 					<pre>{JSON.stringify(race, null, 2)}</pre>
 				</>
@@ -189,8 +206,7 @@ export default function RacePage() {
 				</>
 			) : (
 				"No data"
-			)}
-			<h2>Leaderboard</h2>
+			)} */}
 		</>
 	);
 }
