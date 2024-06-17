@@ -80,7 +80,7 @@ export const fetchRaces_byId = async (id: string): Promise<Race> => {
 //QUERY NEW
 export const fetchPolePosition_byId = async (
 	id: string
-): Promise<DriverPoles> => {
+): Promise<DriverPoles[]> => {
 	const response = await axios.get(
 		"http://localhost:3001/api/results/poles/" + id
 	);
@@ -89,7 +89,7 @@ export const fetchPolePosition_byId = async (
 
 export const fetchConstructorForDriver_byId = async (
 	id: string
-): Promise<ConstructorsForDriver> => {
+): Promise<ConstructorsForDriver[]> => {
 	const response = await axios.get(
 		"http://localhost:3001/api/driver_standings/constructors/" + id
 	);
@@ -98,7 +98,7 @@ export const fetchConstructorForDriver_byId = async (
 
 export const fetchLeaderboard_byIdRace = async (
 	id: string
-): Promise<RaceLeaderboard> => {
+): Promise<RaceLeaderboard[]> => {
 	const response = await axios.get(
 		"http://localhost:3001/api/races/result/" + id
 	);
@@ -141,7 +141,7 @@ export const fetchFastestRTimeEver_byIdCircuit = async (
 	return response.data[0];
 };
 
-export const fetchAllVictory = async (): Promise<HallOfFame> => {
+export const fetchAllVictory = async (): Promise<HallOfFame[]> => {
 	const response = await axios.get(
 		"http://localhost:3001/api/results/halloffame"
 	);
