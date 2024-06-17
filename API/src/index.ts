@@ -891,6 +891,221 @@ app.get("/api/circuits/bestlapraseever/:id", async (req: Request, res: Response)
     });
 });
 
+// Classifica di gare vinte per specifico circuito
+
+app.get("/api/results/numberOfWins/:id", async (req: Request, res: Response) => {
+  if (!req.params.id) {
+      res.send("No ID specified");
+      return;
+  }
+
+  const circuitId = parseInt(req.params.id); // Qui dobbiamo passare l'id del driver
+
+  const agg = [
+    {
+      '$match': {
+        'position': 1
+      }
+    }, {
+      '$lookup': {
+        'from': 'races', 
+        'localField': 'raceId', 
+        'foreignField': 'raceId', 
+        'as': 'circuito'
+      }
+    }, {
+      '$unwind': {
+        'path': '$circuito', 
+        'includeArrayIndex': 'index', 
+        'preserveNullAndEmptyArrays': true
+      }
+    }, {
+      '$lookup': {
+        'from': 'circuits', 
+        'localField': 'circuito.circuitId', 
+        'foreignField': 'circuitId', 
+        'as': 'circuits'
+      }
+    }, {
+      '$unwind': {
+        'path': '$circuits', 
+        'includeArrayIndex': 'index', 
+        'preserveNullAndEmptyArrays': true
+      }
+    }, {
+      '$match': {
+        'circuits.circuitId': circuitId
+      }
+    }, {
+      '$group': {
+        '_id': '$driverId', 
+        'winCount': {
+          '$sum': 1
+        }
+      }
+    }, {
+      '$sort': {
+        'winCount': -1
+      }
+    }, {
+      '$lookup': {
+        'from': 'drivers', 
+        'localField': '_id', 
+        'foreignField': 'driverId', 
+        'as': 'driverDetails'
+      }
+    }, {
+      '$unwind': '$driverDetails'
+    }, {
+      '$project': {
+        '_id': 0, 
+        'driverId': '$_id', 
+        'winCount': '$winCount', 
+        'driverName': {
+          '$concat': [
+            '$driverDetails.forename', ' ', '$driverDetails.surname'
+          ]
+        }
+      }
+    }
+  ];
+
+  database.collection("results").aggregate(agg).toArray((error, result) => {
+      if (!error && result != null) {
+          res.send(result);
+      }
+  });
+});
+
+// Numero totale di gare vinte per specifico pilota
+
+app.get("/api/results/totalNumberWins/:id", async (req: Request, res: Response) => {
+  if (!req.params.id) {
+      res.send("No ID specified");
+      return;
+  }
+
+  const driverId = parseInt(req.params.id); // Qui dobbiamo passare l'id del driver
+
+  const agg = [
+    {
+      '$match': {
+        'position': 1, 
+        'driverId': driverId
+      }
+    }, {
+      '$group': {
+        '_id': '$driverId', 
+        'winCount': {
+          '$sum': 1
+        }
+      }
+    }, {
+      '$sort': {
+        'winCount': -1
+      }
+    }, {
+      '$lookup': {
+        'from': 'drivers', 
+        'localField': '_id', 
+        'foreignField': 'driverId', 
+        'as': 'driverDetails'
+      }
+    }, {
+      '$unwind': '$driverDetails'
+    }, {
+      '$project': {
+        '_id': 0, 
+        'driverId': '$_id', 
+        'winCount': '$winCount', 
+        'driverName': {
+          '$concat': [
+            '$driverDetails.forename', ' ', '$driverDetails.surname'
+          ]
+        }
+      }
+    }
+  ];
+  
+
+  database.collection("results").aggregate(agg).toArray((error, result) => {
+      if (!error && result != null) {
+          res.send(result);
+      }
+  });
+});
+
+// Tutte le gare vinte da uno specifico pilota
+
+app.get("/api/races/allRaceWins/:id", async (req: Request, res: Response) => {
+  if (!req.params.id) {
+      res.send("No ID specified");
+      return;
+  }
+
+  const driverId = parseInt(req.params.id); // Qui dobbiamo passare l'id del driver
+
+  const agg = [
+    {
+      '$lookup': {
+        'from': 'results', 
+        'localField': 'raceId', 
+        'foreignField': 'raceId', 
+        'as': 'risultati'
+      }
+    }, {
+      '$unwind': {
+        'path': '$risultati', 
+        'includeArrayIndex': 'index', 
+        'preserveNullAndEmptyArrays': true
+      }
+    }, {
+      '$lookup': {
+        'from': 'drivers', 
+        'localField': 'risultati.driverId', 
+        'foreignField': 'driverId', 
+        'as': 'nomeDriver'
+      }
+    }, {
+      '$unwind': {
+        'path': '$nomeDriver', 
+        'includeArrayIndex': 'index', 
+        'preserveNullAndEmptyArrays': true
+      }
+    }, {
+      '$match': {
+        'nomeDriver.driverId': driverId
+      }
+    }, {
+      '$sort': {
+        'risultati.position': 1
+      }
+    }, {
+      '$project': {
+        '_id': 0, 
+        'driverId': '$nomeDriver.driverId', 
+        'driverName': {
+          '$concat': [
+            '$nomeDriver.forename', ' ', '$nomeDriver.surname'
+          ]
+        }, 
+        'granPrix': '$name', 
+        'IdGranPrix': '$raceId', 
+        'position': '$risultati.position'
+      }
+    }
+  ];
+  
+  
+
+  database.collection("races").aggregate(agg).toArray((error, result) => {
+      if (!error && result != null) {
+          res.send(result);
+      }
+  });
+});
+
+
 // Classifica piloti con più vittorie
 
 app.get("/api/results/halloffame", async (req: Request, res: Response) => {

@@ -147,3 +147,31 @@ export const fetchAllVictory = async (): Promise<HallOfFame[]> => {
 	);
 	return response.data;
 };
+
+export const fetchCircuitWins_byIdCircuit = async (
+	id: string
+): Promise<FastestRoundCircuit[]> => {
+	const response = await axios.get(
+		"http://localhost:3001/api/results/numberOfWins/" + id
+	);
+	return response.data;
+};
+
+export const fetchNumberRacesWin_byIdDriver = async (
+	id: string
+): Promise<FastestRoundCircuit[]> => {
+	const response = await axios.get(
+		"http://localhost:3001/api/results/totalNumberWins/" + id
+	);
+	return response.data;
+};
+
+export const fetchRacesWin_byIdDriver = async (
+	id: string
+): Promise<FastestRoundCircuit[]> => {
+	const response = await axios.get(
+		"http://localhost:3001/api/races/allRaceWins/" + id
+	);
+	return response.data;
+};
+

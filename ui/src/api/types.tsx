@@ -107,3 +107,21 @@ export interface ImagePortraitProps {
 	url: string;
 	type: string;
 }
+
+export interface CircuitsHallOfFame {
+	driverId: number;
+	winCount: number;
+	driverName: string;
+}
+
+export interface HallOfFame {
+	driverId: number;
+	winCount: number;
+	driverName: string;
+}
+
+export interface HallOfFame {
+	driverId: number;
+	winCount: number;
+	driverName: string;
+}

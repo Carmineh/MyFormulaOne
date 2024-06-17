@@ -6,6 +6,7 @@ import { fetchAllVictory } from "../api/API";
 import { Circuit, HallOfFame } from "../api/types";
 import ImagePortrait from "../components/ImagePortrait";
 import HallOfFameTable from "../components/HallOfFameTable";
+import Loading from "../components/Loading";
 
 export default function CircuitPage() {
 	const id: string = useParams().id ?? "";
@@ -53,7 +54,7 @@ export default function CircuitPage() {
 		<>
 			<Header />
 			<h1>{circuit?.name}</h1>
-			{circuit ? <ImagePortrait url={circuit.url} /> : " Driver not found"}
+			{circuit ? <ImagePortrait url={circuit.url} type={""} /> : " Driver not found"}
 			{HallOfFame ? <HallOfFameTable HallOfFame={HallOfFame} /> : "Constructor not found"}
 		</>
 	);
