@@ -30,11 +30,6 @@ export default function DriverPage() {
 				setLoading(false);
 			}
 		};
-
-		getDriver();
-	}, [id]);
-
-	useEffect(() => {
 		const getDriverConstructor = async () => {
 			try {
 				const result = await fetchConstructorForDriver_byId(id);
@@ -46,10 +41,6 @@ export default function DriverPage() {
 			}
 		};
 
-		getDriverConstructor();
-	}, [id]);
-
-	useEffect(() => {
 		const getDriverPole = async () => {
 			try {
 				const result = await fetchPolePosition_byId(id);
@@ -61,6 +52,8 @@ export default function DriverPage() {
 			}
 		};
 
+		getDriver();
+		getDriverConstructor();
 		getDriverPole();
 	}, [id]);
 
