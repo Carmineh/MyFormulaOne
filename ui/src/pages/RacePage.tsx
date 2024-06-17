@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
+import "./Pages.css";
 import Header from "../components/Header";
 import {
+	fetchCircuits_byId,
 	fetchDrivers_byId,
 	fetchFastestQTime_byIdRace,
 	fetchFastestRTime_byIdRace,
@@ -11,6 +12,7 @@ import {
 } from "../api/API";
 
 import {
+	Circuit,
 	Driver,
 	FastestRoundQualRace,
 	FastestRoundRace,
@@ -20,11 +22,13 @@ import {
 
 import ImagePortrait from "../components/ImagePortrait";
 import Table from "../components/LeaderboardTable";
+import Loading from "../components/Loading";
 
 export default function RacePage() {
 	const id: string = useParams().id ?? "";
 
 	const [race, setRace] = useState<Race>();
+	const [circuit, setCircuit] = useState<Circuit>();
 	const [leaderboard, setLeaderboard] = useState<RaceLeaderboard[]>();
 	const [fastestLapRace, setFastestLapRace] = useState<FastestRoundRace>();
 	const [fastestLapQual, setFastestLapQual] = useState<FastestRoundQualRace>();
@@ -41,9 +45,12 @@ export default function RacePage() {
 	useEffect(() => {
 		const getRace = async () => {
 			try {
-				setLoading(true);
-				const result = await fetchRaces_byId(id);
-				setRace(result);
+				const result_race = await fetchRaces_byId(id);
+				const result_circuit = await fetchCircuits_byId(
+					result_race.circuitId + ""
+				);
+				setRace(result_race);
+				setCircuit(result_circuit);
 				setLoading(false);
 			} catch (error) {
 				setError(error as Error);
@@ -92,19 +99,80 @@ export default function RacePage() {
 		getFastestLapQual();
 		getFastestLapRace();
 	}, [id]);
-	if (loading) return <p>Loading...</p>;
+	if (loading)
+		return (
+			<>
+				<Header />
+				<Loading />
+			</>
+		);
 	if (error) return <p>{error.message}</p>;
 	return (
 		<>
 			<Header />
-			<h1>RACE {id}</h1>
+			{race && fastestLapRace && fastestLapQual && leaderboard && circuit ? (
+				<>
+					<div className="container">
+						<h1 className="centered title">{race.name + " " + race.year}</h1>
+
+						<table className="centered">
+							<td className="race-info_col">
+								<ImagePortrait url={race.url} type="race" />
+							</td>
+							<td className="race-info_col">
+								<div className="race-info">
+									<div className="race-info__item">
+										<img src="/assets/date-icon.png" alt="" className="icon" />
+										<h3>{race.date + " " + race.time} </h3>
+									</div>
+									<div className="race-info__item">
+										<img
+											src="/assets/circuit-icon.png"
+											alt=""
+											className="icon"
+										/>
+										<h3>
+											<a
+												href={"/circuits/" + circuit.circuitId}
+												className="circuit-link"
+											>
+												{circuit.name}
+											</a>
+										</h3>
+									</div>
+									<div className="race-info__item">
+										<img
+											src="/assets/location-icon.png"
+											alt=""
+											className="icon"
+										/>
+										<h3>{circuit.location + "," + circuit.country} </h3>
+									</div>
+								</div>
+							</td>
+						</table>
+
+						<div className="page-container"></div>
+						{leaderboard ? <Table drivers={leaderboard} /> : "No data"}
+					</div>
+				</>
+			) : (
+				<> error</>
+			)}
 			{race ? (
 				<>
-					<ImagePortrait url={race.url} /> <h2>Race Info</h2>
 					<pre>{JSON.stringify(race, null, 2)}</pre>
 				</>
 			) : (
 				" Race not found"
+			)}
+			{circuit ? (
+				<>
+					<h2>Circuit</h2>
+					<pre>{JSON.stringify(circuit, null, 2)}</pre>
+				</>
+			) : (
+				"No data"
 			)}
 			{fastestLapQual ? (
 				<>
@@ -123,7 +191,6 @@ export default function RacePage() {
 				"No data"
 			)}
 			<h2>Leaderboard</h2>
-			{leaderboard ? <Table drivers={leaderboard} /> : "No data"}
 		</>
 	);
 }

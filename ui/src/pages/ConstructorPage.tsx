@@ -4,6 +4,7 @@ import Header from "../components/Header";
 
 import { Constructor } from "../api/types";
 import { fetchConstructors_byId } from "../api/API";
+import Loading from "../components/Loading";
 
 export default function ConstructorPage() {
 	const id: string = useParams().id ?? "";
@@ -28,7 +29,13 @@ export default function ConstructorPage() {
 		getConstructor();
 	}, [id]);
 
-	if (loading) return <p>Loading...</p>;
+	if (loading)
+		return (
+			<>
+				<Header />
+				<Loading />
+			</>
+		);
 	if (error) return <p>{error.message}</p>;
 
 	return (

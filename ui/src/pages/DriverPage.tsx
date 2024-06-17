@@ -4,10 +4,11 @@ import { useParams } from "react-router-dom";
 import { fetchDrivers_byId } from "../api/API";
 import { fetchConstructorForDriver_byId } from "../api/API";
 import { fetchPolePosition_byId } from "../api/API";
-import { ConstructorsForDriver, Driver, DriverPoles} from "../api/types";
+import { ConstructorsForDriver, Driver, DriverPoles } from "../api/types";
 import ImagePortrait from "../components/ImagePortrait";
 import Table from "../components/DriverConstructorTable";
 import Pole from "../components/DriverPolePositionTable";
+import Loading from "../components/Loading";
 
 export default function DriverPage() {
 	const id: string = useParams().id ?? "";
@@ -63,19 +64,34 @@ export default function DriverPage() {
 		getDriverPole();
 	}, [id]);
 
-	if (loading) return <p>Loading...</p>;
+	if (loading)
+		return (
+			<>
+				<Header />
+				<Loading />
+			</>
+		);
 	if (error) return <p>{error.message}</p>;
 
-	console.log(driver?.url);
 	return (
 		<>
 			<Header />
-			<h1>{driver?.forename} {driver?.surname}</h1>
-			{driver ? <ImagePortrait url={driver.url} /> : " Driver not found"}
-			
+			<h1>
+				{driver?.forename} {driver?.surname}
+			</h1>
+			{driver ? (
+				<ImagePortrait url={driver.url} type="driver" />
+			) : (
+				" Driver not found"
+			)}
+
 			<h2>Scuderie per cui ha corso</h2>
-			{constructor ? <Table constructors={constructor} /> : "Constructor not found"}
-			
+			{constructor ? (
+				<Table constructors={constructor} />
+			) : (
+				"Constructor not found"
+			)}
+
 			<h2>Numero di Pole Position totali</h2>
 			{pole ? <Pole DriverPoles={pole} /> : "Constructor not found"}
 		</>

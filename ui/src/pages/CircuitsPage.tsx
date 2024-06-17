@@ -5,6 +5,7 @@ import Table from "../components/CircuitTable";
 import { Circuit } from "../api/types";
 import { fetchCircuits_all } from "../api/API";
 import { useResolvedPath } from "react-router-dom";
+import Loading from "../components/Loading";
 
 export default function CircuitsPage() {
 	const [circuits, setCircuits] = useState<Circuit[]>([]);
@@ -26,7 +27,13 @@ export default function CircuitsPage() {
 		getCircuits();
 	}, []);
 
-	if (loading) return <p>Loading...</p>;
+	if (loading)
+		return (
+			<>
+				<Header />
+				<Loading />
+			</>
+		);
 	if (error) return <p>{error.message}</p>;
 
 	return (

@@ -3,6 +3,7 @@ import Header from "../components/Header";
 import { useParams } from "react-router-dom";
 import { fetchCircuits_byId } from "../api/API";
 import { Circuit } from "../api/types";
+import Loading from "../components/Loading";
 
 export default function CircuitPage() {
 	const id: string = useParams().id ?? "";
@@ -25,6 +26,14 @@ export default function CircuitPage() {
 
 		getCircuit();
 	}, [id]);
+
+	if (loading)
+		return (
+			<>
+				<Header />
+				<Loading />
+			</>
+		);
 	return (
 		<>
 			<Header />
