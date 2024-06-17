@@ -4,7 +4,7 @@ import "./Header.css";
 export default function Header() {
 	return (
 		<>
-			<div className="">
+			<div className="header">
 				<nav className="navbar bg-body-tertiary header-up">
 					<div className="container-fluid">
 						<a className="navbar-brand" href="/">

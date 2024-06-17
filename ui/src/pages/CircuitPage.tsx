@@ -41,6 +41,14 @@ export default function CircuitPage() {
 		getHallOfFame();
 		getCircuit();
 	}, [id]);
+
+	if (loading)
+		return (
+			<>
+				<Header />
+				<Loading />
+			</>
+		);
 	return (
 		<>
 			<Header />

@@ -105,4 +105,5 @@ export interface HallOfFame {
 
 export interface ImagePortraitProps {
 	url: string;
+	type: string;
 }

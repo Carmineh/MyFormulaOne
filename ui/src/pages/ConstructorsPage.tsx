@@ -4,6 +4,7 @@ import Table from "../components/ConstructorTable";
 
 import { Constructor } from "../api/types";
 import { fetchConstructors_all } from "../api/API";
+import Loading from "../components/Loading";
 
 export default function ConstructorsPage() {
 	const [constructors, setConstructors] = useState<Constructor[]>([]);
@@ -25,7 +26,13 @@ export default function ConstructorsPage() {
 		getConstructors();
 	}, []);
 
-	if (loading) return <p>Loading...</p>;
+	if (loading)
+		return (
+			<>
+				<Header />
+				<Loading />
+			</>
+		);
 	if (error) return <p>{error.message}</p>;
 
 	return (

@@ -4,6 +4,7 @@ import Table from "../components/DriverTable";
 
 import { Driver } from "../api/types";
 import { fetchDrivers_all } from "../api/API";
+import Loading from "../components/Loading";
 
 export default function DriversPage() {
 	const [drivers, setDrivers] = useState<Driver[]>([]);
@@ -25,7 +26,13 @@ export default function DriversPage() {
 		getDrivers();
 	}, []);
 
-	if (loading) return <p>Loading...</p>;
+	if (loading)
+		return (
+			<>
+				<Header />
+				<Loading />
+			</>
+		);
 	if (error) return <p>{error.message}</p>;
 
 	return (
