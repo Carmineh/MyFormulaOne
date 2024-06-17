@@ -72,12 +72,35 @@ export interface FastestRoundRace {
 	fastestLap: number;
 }
 
-export interface FastestRoundQual {
+export interface FastestRoundQualRace {
 	raceId: number;
 	fastestTime: string;
 	driverName: string;
 	raceName: string;
 	data: Date;
+}
+
+export interface FastestRoundCircuit {
+	circuitName: string;
+	raceName: string;
+	date: Date;
+	fastestLapTime: string;
+	driverName: string;
+}
+
+export interface FastestRoundQualCircuit {
+	circuitId: number;
+	circuitName: string;
+	fastestQualifyingTime: string;
+	driverName: string;
+	raceName: string;
+	data: Date;
+}
+
+export interface HallOfFame {
+	driverId: number;
+	winCount: number;
+	driverName: string;
 }
 
 export interface ImagePortraitProps {

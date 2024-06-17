@@ -14,6 +14,12 @@ import {
 	DriverPoles,
 	ConstructorsForDriver,
 	RaceLeaderboard,
+	FastestRoundRace,
+	FastestRoundQual,
+	FastestRoundQualRace,
+	FastestRoundQualCircuit,
+	FastestRoundCircuit,
+	HallOfFame,
 } from "../api/types";
 
 //DRIVERS API CALL
@@ -100,14 +106,18 @@ export const fetchLeaderboard_byIdRace = async (
 	return response.data;
 };
 
-export const fetchFastestRTime_byIdRace = async (id: string): Promise<Race> => {
+export const fetchFastestRTime_byIdRace = async (
+	id: string
+): Promise<FastestRoundRace> => {
 	const response = await axios.get(
 		"http://localhost:3001/api/results/bestlaprace/" + id
 	);
 	return response.data[0];
 };
 
-export const fetchFastestQTime_byIdRace = async (id: string): Promise<Race> => {
+export const fetchFastestQTime_byIdRace = async (
+	id: string
+): Promise<FastestRoundQualRace> => {
 	const response = await axios.get(
 		"http://localhost:3001/api/qualifying/bestlap/" + id
 	);
@@ -116,7 +126,7 @@ export const fetchFastestQTime_byIdRace = async (id: string): Promise<Race> => {
 
 export const fetchFastestQTimeEver_byIdCircuit = async (
 	id: string
-): Promise<Race> => {
+): Promise<FastestRoundQualCircuit> => {
 	const response = await axios.get(
 		"http://localhost:3001/api/circuits/bestlapq3ever/" + id
 	);
@@ -125,16 +135,16 @@ export const fetchFastestQTimeEver_byIdCircuit = async (
 
 export const fetchFastestRTimeEver_byIdCircuit = async (
 	id: string
-): Promise<Race> => {
+): Promise<FastestRoundCircuit> => {
 	const response = await axios.get(
 		"http://localhost:3001/api/circuits/bestlapraseever/" + id
 	);
 	return response.data[0];
 };
 
-export const fetchAllVictory = async (): Promise<Race> => {
+export const fetchAllVictory = async (): Promise<HallOfFame> => {
 	const response = await axios.get(
 		"http://localhost:3001/api/results/halloffame"
 	);
-	return response.data[0];
+	return response.data;
 };
