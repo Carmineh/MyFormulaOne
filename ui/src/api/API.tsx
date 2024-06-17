@@ -63,3 +63,60 @@ export const fetchRaces_byId = async (id: string): Promise<Race> => {
 	);
 	return response.data[0];
 };
+
+//QUERY NEW
+export const fetchPolePosition_byId = async (id: string): Promise<Race> => {
+	const response = await axios.get(
+		"http://localhost:3001/api/results/poles/" + id
+	);
+	return response.data[0];
+};
+
+export const fetchConstructorForDriver_byId = async (id: string): Promise<Race> => {
+	const response = await axios.get(
+		"http://localhost:3001/api/driver_standings/constructors/" + id
+	);
+	return response.data[0];
+};
+
+export const fetchClassification_byIdRace = async (id: string): Promise<Race> => {
+	const response = await axios.get(
+		"http://localhost:3001/api/races/result/" + id
+	);
+	return response.data[0];
+};
+
+export const fetchFastestRTime_byIdRace = async (id: string): Promise<Race> => {
+	const response = await axios.get(
+		"http://localhost:3001/api/results/bestlaprace/" + id
+	);
+	return response.data[0];
+};
+
+export const fetchFastestQTime_byIdRace = async (id: string): Promise<Race> => {
+	const response = await axios.get(
+		"http://localhost:3001/api/qualifying/bestlap/" + id
+	);
+	return response.data[0];
+};
+
+export const fetchFastestQTimeEver_byIdCircuit = async (id: string): Promise<Race> => {
+	const response = await axios.get(
+		"http://localhost:3001/api/circuits/bestlapq3ever/" + id
+	);
+	return response.data[0];
+};
+
+export const fetchFastestRTimeEver_byIdCircuit = async (id: string): Promise<Race> => {
+	const response = await axios.get(
+		"http://localhost:3001/api/circuits/bestlapraseever/" + id
+	);
+	return response.data[0];
+};
+
+export const fetchAllVictory = async (): Promise<Race> => {
+	const response = await axios.get(
+		"http://localhost:3001/api/results/halloffame"
+	);
+	return response.data[0];
+};
