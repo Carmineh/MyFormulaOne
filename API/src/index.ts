@@ -1090,6 +1090,7 @@ app.get("/api/races/allRaceWins/:id", async (req: Request, res: Response) => {
           ]
         }, 
         'granPrix': '$name', 
+        'date': '$date', 
         'IdGranPrix': '$raceId', 
         'position': '$risultati.position'
       }

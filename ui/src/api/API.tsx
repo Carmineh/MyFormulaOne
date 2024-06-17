@@ -19,6 +19,9 @@ import {
 	FastestRoundQualCircuit,
 	FastestRoundCircuit,
 	HallOfFame,
+	CircuitsHallOfFame,
+	RaceWinsForDriver,
+	totalNumberWinsForDriver,
 } from "../api/types";
 
 //DRIVERS API CALL
@@ -150,7 +153,7 @@ export const fetchAllVictory = async (): Promise<HallOfFame[]> => {
 
 export const fetchCircuitWins_byIdCircuit = async (
 	id: string
-): Promise<FastestRoundCircuit[]> => {
+): Promise<CircuitsHallOfFame[]> => {
 	const response = await axios.get(
 		"http://localhost:3001/api/results/numberOfWins/" + id
 	);
@@ -159,7 +162,7 @@ export const fetchCircuitWins_byIdCircuit = async (
 
 export const fetchNumberRacesWin_byIdDriver = async (
 	id: string
-): Promise<FastestRoundCircuit[]> => {
+): Promise<totalNumberWinsForDriver[]> => {
 	const response = await axios.get(
 		"http://localhost:3001/api/results/totalNumberWins/" + id
 	);
@@ -168,7 +171,7 @@ export const fetchNumberRacesWin_byIdDriver = async (
 
 export const fetchRacesWin_byIdDriver = async (
 	id: string
-): Promise<FastestRoundCircuit[]> => {
+): Promise<RaceWinsForDriver[]> => {
 	const response = await axios.get(
 		"http://localhost:3001/api/races/allRaceWins/" + id
 	);

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import { useParams } from "react-router-dom";
 import { fetchCircuits_byId } from "../api/API";
-import { fetchAllVictory } from "../api/API";
+import { fetchCircuitWins_byIdCircuit } from "../api/API";
 import { Circuit, HallOfFame } from "../api/types";
 import ImagePortrait from "../components/ImagePortrait";
 import HallOfFameTable from "../components/HallOfFameTable";
@@ -31,7 +31,7 @@ export default function CircuitPage() {
 
 		const getHallOfFame = async () => {
 			try {
-				const result = await fetchAllVictory();
+				const result = await fetchCircuitWins_byIdCircuit(id);
 				setHallOfFame(result);
 				setLoading(false);
 			} catch (error) {
@@ -55,6 +55,7 @@ export default function CircuitPage() {
 			<Header />
 			<h1>{circuit?.name}</h1>
 			{circuit ? <ImagePortrait url={circuit.url} type={""} /> : " Driver not found"}
+			<h2>Piloti con più vittore a {circuit?.location} </h2>
 			{HallOfFame ? <HallOfFameTable HallOfFame={HallOfFame} /> : "Constructor not found"}
 		</>
 	);

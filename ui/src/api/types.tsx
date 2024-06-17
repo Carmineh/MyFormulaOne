@@ -114,14 +114,17 @@ export interface CircuitsHallOfFame {
 	driverName: string;
 }
 
-export interface HallOfFame {
+export interface totalNumberWinsForDriver {
 	driverId: number;
 	winCount: number;
 	driverName: string;
 }
 
-export interface HallOfFame {
+export interface RaceWinsForDriver {
 	driverId: number;
-	winCount: number;
 	driverName: string;
+	granPrix : string;
+	data: string;
+	IdGranPrix: number;
+	position: number;
 }
