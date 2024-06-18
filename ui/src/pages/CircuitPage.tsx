@@ -69,6 +69,7 @@ export default function CircuitPage() {
 						</div>
 					</td>
 				</table>
+				
 				<div className="page-container">
 					<h2>Piloti con più vittore a {circuit?.location} </h2>
 					{HallOfFame ? <HallOfFameTable HallOfFame={HallOfFame} /> : "Constructor not found"}
