@@ -188,6 +188,8 @@ export default function RacePage() {
 						</button>
 						<div className="page-container"></div>
 						{tableToShow === 1 && leaderboard ? (
+						<div className="page-container">
+						{leaderboard ? (
 							<LeaderboardTable drivers={leaderboard} />
 						) : (
 							""
@@ -204,6 +206,8 @@ export default function RacePage() {
 						) : (
 							""
 						)}
+						</div>
+						
 					</div>
 				</>
 			) : (

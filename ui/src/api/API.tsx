@@ -162,11 +162,11 @@ export const fetchCircuitWins_byIdCircuit = async (
 
 export const fetchNumberRacesWin_byIdDriver = async (
 	id: string
-): Promise<totalNumberWinsForDriver[]> => {
+): Promise<totalNumberWinsForDriver> => {
 	const response = await axios.get(
 		"http://localhost:3001/api/results/totalNumberWins/" + id
 	);
-	return response.data;
+	return response.data[0];
 };
 
 export const fetchRacesWin_byIdDriver = async (

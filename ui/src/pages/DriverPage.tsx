@@ -21,9 +21,10 @@ export default function DriverPage() {
 	const [constructor, setConstructor] = useState<ConstructorsForDriver[]>();
 	const [pole, setPole] = useState<DriverPoles[]>();
 	const [wins, setWins] = useState<RaceWinsForDriver[]>();
-	const [numberWins, setNumberWins] = useState<totalNumberWinsForDriver[]>();
+	const [numberWins, setNumberWins] = useState<totalNumberWinsForDriver>();
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<Error | null>(null);
+	const [showRace, setShowRace] = useState(true); // Lo setto a true perchè di default voglio le gare
 
 	useEffect(() => {
 		const getDriver = async () => {
@@ -50,7 +51,11 @@ export default function DriverPage() {
 		const getDriverPole = async () => {
 			try {
 				const result = await fetchPolePosition_byId(id);
-				setPole(result);
+				const formattedResult = result.map((race: any) => {
+					const [year, month, day] = race.raceDate.split("T")[0].split("-");
+					return { ...race, raceDate: `${day}/${month}/${year}` };
+				});
+				setPole(formattedResult);
 				setLoading(false);
 			} catch (error) {
 				setError(error as Error);
@@ -61,7 +66,11 @@ export default function DriverPage() {
 		const getDriverWins = async () => {
 			try {
 				const result = await fetchRacesWin_byIdDriver(id);
-				setWins(result);
+				const formattedResult = result.map((race: any) => {
+					const [year, month, day] = race.date.split("T")[0].split("-");
+					return { ...race, date: `${day}/${month}/${year}` };
+				});
+				setWins(formattedResult);
 				setLoading(false);
 			} catch (error) {
 				setError(error as Error);
@@ -99,31 +108,61 @@ export default function DriverPage() {
 	return (
 		<>
 			<Header />
-			<h1>
-				{driver?.forename} {driver?.surname}
-			</h1>
-			{driver ? (
-				<ImagePortrait url={driver.url} type="driver" />
-			) : (
-				" Driver not found"
-			)}
-
-			<h2>Vittorie totali</h2>
-
-            <pre>{JSON.stringify(numberWins, null, 2)}</pre>
-
-			<h2>Scuderie per cui ha corso</h2>
-			{constructor ? (
-				<Table constructors={constructor} />
-			) : (
-				"Sto caricando"
-			)}
-
-			<h2>Numero di Pole Position totali</h2>
-			{pole ? <Pole DriverPoles={pole} /> : "Sto caricando"}
+			<div className="container">
 			
-			<h2>Gare vinte</h2>
-			{wins ? <Race RaceWinsForDriver={wins} /> : "Sto caricando"}
+				<h1 className="centered title">
+					{driver?.forename} {driver?.surname}
+				</h1>
+
+				<table className="centered">
+					<td className="race-info_col">
+						{driver ? (<ImagePortrait url={driver.url} type="driver" />) : (" Driver not found")}
+					</td>
+				
+					<td className="race-info_col">
+						<div className="race-info">
+							<div className="race-info__item">
+								<img src="/assets/vittoria.png" alt="" className="icon" />
+								<h3> {numberWins ? numberWins.winCount + " Vittorie": "Nessun dato disponibile"}</h3>
+							</div>
+							<div className="race-info__item">
+								<img src="/assets/pole-position.png" alt="" className="icon" />
+								<h3>{pole && pole.length > 0 ? pole[0].totalPoles + " PolePosition" : "Nessun dato disponibile"}</h3>
+							</div>
+						</div>
+					</td>
+				</table>
+
+				<div className="page-container">
+					<h2>Scuderie per cui ha corso</h2>
+					{constructor ? (
+						<Table constructors={constructor} />
+					) : (
+						"Sto caricando"
+					)}
+
+					<div className="results-toggle">
+						<button onClick={() => setShowRace(true)} className={showRace ? "active" : ""}>
+							Mostra Risultati Gara
+						</button>
+						<button onClick={() => setShowRace(false)} className={!showRace ? "active" : ""}>
+							Mostra Tabella Qualifica
+						</button>
+					</div>
+
+					{showRace ? (
+						<>
+							<h2>Gare vinte</h2>
+							{wins ? <Race RaceWinsForDriver={wins} /> : "Sto caricando"}
+						</>
+					) : (
+						<>
+							<h2>Pole Position</h2>
+							{pole ? <Pole DriverPoles={pole} /> : "Sto caricando"}
+						</>
+					)}
+				</div>
+			</div>
 		</>
 	);
 }
