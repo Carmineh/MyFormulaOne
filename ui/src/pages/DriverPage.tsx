@@ -21,7 +21,7 @@ export default function DriverPage() {
 	const [constructor, setConstructor] = useState<ConstructorsForDriver[]>();
 	const [pole, setPole] = useState<DriverPoles[]>();
 	const [wins, setWins] = useState<RaceWinsForDriver[]>();
-	const [numberWins, setNumberWins] = useState<totalNumberWinsForDriver[]>();
+	const [numberWins, setNumberWins] = useState<totalNumberWinsForDriver>();
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<Error | null>(null);
 	const [showRace, setShowRace] = useState(true); // Lo setto a true perchè di default voglio le gare
