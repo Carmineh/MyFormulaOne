@@ -59,17 +59,25 @@ export interface ConstructorsForDriver {
 export interface RaceLeaderboard {
 	driverId: number;
 	driverName: string;
+	car: string;
 	grandPrix: string;
 	IdGranPrix: number;
 	position: number;
+	time: string;
+	status: string;
+	laps: number;
 }
 
 export interface FastestRoundRace {
-	bestLapTime: string;
-	driverName: string;
-	driverId: number;
 	raceId: number;
-	fastestLap: number;
+	position: number;
+	driver: string;
+	car: string;
+	q1: string;
+	q2: string;
+	q3: string;
+	raceName: string;
+	data: Date;
 }
 
 export interface FastestRoundQualRace {
@@ -123,7 +131,7 @@ export interface totalNumberWinsForDriver {
 export interface RaceWinsForDriver {
 	driverId: number;
 	driverName: string;
-	granPrix : string;
+	granPrix: string;
 	data: string;
 	IdGranPrix: number;
 	position: number;

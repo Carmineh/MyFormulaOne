@@ -390,55 +390,87 @@ app.get("/api/races/result/:id", async (req: Request, res: Response) => {
     const raceId = parseInt(req.params.id); // Qui dobbiamo passare l'id del driver
 
     const agg = [
-        {
-          '$match': {
-            'raceId': raceId
-          }
-        }, {
-          '$lookup': {
-            'from': 'results', 
-            'localField': 'raceId', 
-            'foreignField': 'raceId', 
-            'as': 'risultati'
-          }
-        }, {
-          '$unwind': {
-            'path': '$risultati', 
-            'includeArrayIndex': 'index', 
-            'preserveNullAndEmptyArrays': true
-          }
-        }, {
-          '$lookup': {
-            'from': 'drivers', 
-            'localField': 'risultati.driverId', 
-            'foreignField': 'driverId', 
-            'as': 'nomeDriver'
-          }
-        }, {
-          '$unwind': {
-            'path': '$nomeDriver', 
-            'includeArrayIndex': 'index', 
-            'preserveNullAndEmptyArrays': true
-          }
-        }, {
-          '$sort': {
-            'risultati.position': 1
-          }
-        }, {
-          '$project': {
-            '_id': 0, 
-            'driverId': '$nomeDriver.driverId', 
-            'driverName': {
-              '$concat': [
-                '$nomeDriver.forename', ' ', '$nomeDriver.surname'
-              ]
-            }, 
-            'granPrix': '$name', 
-            'IdGranPrix': '$raceId', 
-            'position': '$risultati.position'
-          }
+      {
+        '$match': {
+          'raceId': raceId
         }
-      ];
+      }, {
+        '$lookup': {
+          'from': 'results', 
+          'localField': 'raceId', 
+          'foreignField': 'raceId', 
+          'as': 'risultati'
+        }
+      }, {
+        '$unwind': {
+          'path': '$risultati', 
+          'includeArrayIndex': 'index', 
+          'preserveNullAndEmptyArrays': true
+        }
+      }, {
+        '$lookup': {
+          'from': 'drivers', 
+          'localField': 'risultati.driverId', 
+          'foreignField': 'driverId', 
+          'as': 'nomeDriver'
+        }
+      }, {
+        '$unwind': {
+          'path': '$nomeDriver', 
+          'includeArrayIndex': 'index', 
+          'preserveNullAndEmptyArrays': true
+        }
+      }, {
+        '$lookup': {
+          'from': 'constructors', 
+          'localField': 'risultati.constructorId', 
+          'foreignField': 'constructorId', 
+          'as': 'costruttore'
+        }
+      }, {
+        '$unwind': {
+          'path': '$costruttore', 
+          'includeArrayIndex': 'index', 
+          'preserveNullAndEmptyArrays': false
+        }
+      }, {
+        '$lookup': {
+          'from': 'status', 
+          'localField': 'risultati.statusId', 
+          'foreignField': 'statusId', 
+          'as': 'status'
+        }
+      }, {
+        '$unwind': {
+          'path': '$status', 
+          'includeArrayIndex': 'index', 
+          'preserveNullAndEmptyArrays': false
+        }
+      }, {
+        '$sort': {
+          'risultati.position': 1
+        }
+      }, {
+        '$project': {
+          '_id': 0, 
+          'driverId': '$nomeDriver.driverId', 
+          'driverName': {
+            '$concat': [
+              '$nomeDriver.forename', ' ', '$nomeDriver.surname'
+            ]
+          }, 
+          'car': '$costruttore.name', 
+          'granPrix': '$name', 
+          'IdGranPrix': '$raceId', 
+          'position': '$risultati.position', 
+          'time': '$risultati.time', 
+          'status': '$status.status', 
+          'laps': '$risultati.laps' 
+        }
+      }
+    ];
+    
+    
     database.collection("races").aggregate(agg).toArray((error, result) => {
         if (!error && result != null) {
             res.send(result);
@@ -520,120 +552,100 @@ app.get("/api/qualifying/bestlap/:id", async (req: Request, res: Response) => {
     const raceId = parseInt(req.params.id); // Qui dobbiamo passare l'id del driver
 
     const agg = [
-        {
-          '$match': {
-            'raceId': raceId
-          }
-        }, {
-          '$lookup': {
-            'from': 'races', 
-            'localField': 'raceId', 
-            'foreignField': 'raceId', 
-            'as': 'raceDetails'
-          }
-        }, {
-          '$unwind': {
-            'path': '$raceDetails', 
-            'includeArrayIndex': 'index', 
-            'preserveNullAndEmptyArrays': true
-          }
-        }, {
-          '$match': {
-            '$or': [
-              {
-                'q1': {
-                  '$exists': true, 
-                  '$ne': null, 
-                  '$nin': [
-                    '\\N'
-                  ]
-                }
-              }, {
-                'q2': {
-                  '$exists': true, 
-                  '$ne': null, 
-                  '$nin': [
-                    '\\N'
-                  ]
-                }
-              }, {
-                'q3': {
-                  '$exists': true, 
-                  '$ne': null, 
-                  '$nin': [
-                    '\\N'
-                  ]
-                }
+      {
+        '$match': {
+          'raceId': 1098
+        }
+      }, {
+        '$lookup': {
+          'from': 'races', 
+          'localField': 'raceId', 
+          'foreignField': 'raceId', 
+          'as': 'raceDetails'
+        }
+      }, {
+        '$unwind': {
+          'path': '$raceDetails', 
+          'includeArrayIndex': 'index', 
+          'preserveNullAndEmptyArrays': true
+        }
+      }, {
+        '$match': {
+          '$or': [
+            {
+              'q1': {
+                '$exists': true, 
+                '$ne': null, 
+                '$nin': [
+                  '\\N'
+                ]
               }
-            ]
-          }
-        }, {
-          '$addFields': {
-            'best_qualifying_time': {
-              '$reduce': {
-                'input': [
-                  '$q1', '$q2', '$q3'
-                ], 
-                'initialValue': null, 
-                'in': {
-                  '$cond': {
-                    'if': {
-                      '$or': [
-                        {
-                          '$eq': [
-                            '$$value', null
-                          ]
-                        }, {
-                          '$and': [
-                            {
-                              '$ne': [
-                                '$$this', null
-                              ]
-                            }, {
-                              '$lt': [
-                                '$$this', '$$value'
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    }, 
-                    'then': '$$this', 
-                    'else': '$$value'
-                  }
-                }
+            }, {
+              'q2': {
+                '$exists': true, 
+                '$ne': null, 
+                '$nin': [
+                  '\\N'
+                ]
+              }
+            }, {
+              'q3': {
+                '$exists': true, 
+                '$ne': null, 
+                '$nin': [
+                  '\\N'
+                ]
               }
             }
-          }
-        }, {
-          '$sort': {
-            'best_qualifying_time': 1
-          }
-        }, {
-          '$limit': 1
-        }, {
-          '$lookup': {
-            'from': 'drivers', 
-            'localField': 'driverId', 
-            'foreignField': 'driverId', 
-            'as': 'driverDetails'
-          }
-        }, {
-          '$unwind': '$driverDetails'
-        }, {
-          '$project': {
-            'raceId': '$raceId', 
-            'fastestQualifyingTime': '$best_qualifying_time', 
-            'driverName': {
-              '$concat': [
-                '$driverDetails.forename', ' ', '$driverDetails.surname'
-              ]
-            }, 
-            'raceName': '$raceDetails.name', 
-            'data': '$raceDetails.date'
-          }
+          ]
         }
-      ];
+      }, {
+        '$sort': {
+          'position': 1
+        }
+      }, {
+        '$lookup': {
+          'from': 'drivers', 
+          'localField': 'driverId', 
+          'foreignField': 'driverId', 
+          'as': 'driverDetails'
+        }
+      }, {
+        '$unwind': '$driverDetails'
+      }, {
+        '$lookup': {
+          'from': 'constructors', 
+          'localField': 'constructorId', 
+          'foreignField': 'constructorId', 
+          'as': 'costruttore'
+        }
+      }, {
+        '$unwind': {
+          'path': '$costruttore', 
+          'includeArrayIndex': 'index', 
+          'preserveNullAndEmptyArrays': true
+        }
+      }, {
+        '$project': {
+          '_id': 0, 
+          'raceId': '$raceId', 
+          'position': '$position', 
+          'driver': {
+            '$concat': [
+              '$driverDetails.forename', ' ', '$driverDetails.surname'
+            ]
+          }, 
+          'fastestQualifyingTime': '$best_qualifying_time', 
+          'car': '$costruttore.name', 
+          'q1': '$q1', 
+          'q2': '$q2', 
+          'q3': '$q3', 
+          'raceName': '$raceDetails.name', 
+          'data': '$raceDetails.date'
+        }
+      }
+    ];
+    
     database.collection("qualifying").aggregate(agg).toArray((error, result) => {
         if (!error && result != null) {
             res.send(result);
