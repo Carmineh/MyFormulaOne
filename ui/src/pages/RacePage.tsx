@@ -33,6 +33,7 @@ export default function RacePage() {
 	const [fastestLapRace, setFastestLapRace] = useState<FastestRoundRace[]>();
 	const [fastestLapQual, setFastestLapQual] =
 		useState<FastestRoundQualRace[]>();
+	const [tableToShow, setTableToShow] = useState<number>(1);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<Error | null>(null);
 
@@ -167,24 +168,43 @@ export default function RacePage() {
 								</div>
 							</td>
 						</table>
-
+						<button
+							onClick={() => setTableToShow(1)}
+							className={tableToShow === 1 ? "active" : ""}
+						>
+							Leaderboard
+						</button>
+						<button
+							onClick={() => setTableToShow(2)}
+							className={tableToShow === 2 ? "active" : ""}
+						>
+							Race Times
+						</button>
+						<button
+							onClick={() => setTableToShow(3)}
+							className={tableToShow === 3 ? "active" : ""}
+						>
+							Qualifying Times
+						</button>
+						<div className="page-container"></div>
+						{tableToShow === 1 && leaderboard ? (
 						<div className="page-container">
 						{leaderboard ? (
 							<LeaderboardTable drivers={leaderboard} />
 						) : (
-							"No data"
+							""
 						)}
-						{fastestLapRace ? (
+						{tableToShow === 2 && fastestLapRace ? (
 							<>
 								<LapsTable drivers={fastestLapRace} />
 							</>
 						) : (
-							"No data"
+							""
 						)}
-						{fastestLapRace ? (
+						{tableToShow === 3 && fastestLapQual ? (
 							<QualTable drivers={fastestLapQual} />
 						) : (
-							"No data"
+							""
 						)}
 						</div>
 						
