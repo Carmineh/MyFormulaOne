@@ -23,6 +23,7 @@ import LeaderboardTable from "../components/Race_LeaderboardTable";
 import Loading from "../components/Loading";
 import QualTable from "../components/Race_BestQualTable";
 import LapsTable from "../components/Race_BestLapTable";
+import "./Pages.css";
 
 export default function RacePage() {
 	const id: string = useParams().id ?? "";
@@ -168,28 +169,28 @@ export default function RacePage() {
 								</div>
 							</td>
 						</table>
-						<button
-							onClick={() => setTableToShow(1)}
-							className={tableToShow === 1 ? "active" : ""}
-						>
-							Leaderboard
-						</button>
-						<button
-							onClick={() => setTableToShow(2)}
-							className={tableToShow === 2 ? "active" : ""}
-						>
-							Race Times
-						</button>
-						<button
-							onClick={() => setTableToShow(3)}
-							className={tableToShow === 3 ? "active" : ""}
-						>
-							Qualifying Times
-						</button>
+						<div className="results-toggle">
+							<button
+								onClick={() => setTableToShow(1)}
+								className={tableToShow === 1 ? "active" : ""}
+							>
+								Leaderboard
+							</button>
+							<button
+								onClick={() => setTableToShow(2)}
+								className={tableToShow === 2 ? "active" : ""}
+							>
+								Race Times
+							</button>
+							<button
+								onClick={() => setTableToShow(3)}
+								className={tableToShow === 3 ? "active" : ""}
+							>
+								Qualifying Times
+							</button>
+						</div>
 						<div className="page-container"></div>
 						{tableToShow === 1 && leaderboard ? (
-						<div className="page-container">
-						{leaderboard ? (
 							<LeaderboardTable drivers={leaderboard} />
 						) : (
 							""
@@ -206,8 +207,6 @@ export default function RacePage() {
 						) : (
 							""
 						)}
-						</div>
-						
 					</div>
 				</>
 			) : (
