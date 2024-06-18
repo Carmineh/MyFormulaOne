@@ -12,6 +12,7 @@ import Table from "../components/DriverConstructorTable";
 import Pole from "../components/DriverPolePositionTable";
 import Race from "../components/DriverRaceWinsTable";
 import Loading from "../components/Loading";
+import "./Pages.css";
 
 export default function DriverPage() {
 	const id: string = useParams().id ?? "";
