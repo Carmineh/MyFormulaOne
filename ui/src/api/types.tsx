@@ -134,7 +134,7 @@ export interface RaceWinsForDriver {
 	driverId: number;
 	driverName: string;
 	granPrix: string;
-	data: string;
+	date: string;
 	IdGranPrix: number;
 	position: number;
 }

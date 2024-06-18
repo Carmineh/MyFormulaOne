@@ -44,7 +44,7 @@ const DriverTable: React.FC<RaceWinsForDrivers> = ({ RaceWinsForDriver }) => {
 						<tr key={item.driverId} className="Table">
 							<th scope="row">{lastIndex <= 15 ? index : index + lastIndex}</th>
 							<td>{item.granPrix}</td>
-                            <td>{item.data}</td>
+                            <td>{item.date}</td>
 						</tr>
 					))}
 				</tbody>
