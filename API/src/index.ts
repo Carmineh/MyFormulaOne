@@ -1086,6 +1086,10 @@ app.get("/api/races/allRaceWins/:id", async (req: Request, res: Response) => {
         'preserveNullAndEmptyArrays': true
       }
     }, {
+      '$match': {
+        'risultati.position': 1
+      }
+    }, {
       '$lookup': {
         'from': 'drivers', 
         'localField': 'risultati.driverId', 
@@ -1102,10 +1106,11 @@ app.get("/api/races/allRaceWins/:id", async (req: Request, res: Response) => {
       '$match': {
         'nomeDriver.driverId': driverId
       }
-    }, {
-      '$sort': {
-        'risultati.position': 1
-      }
+    },{
+      '$sort':
+        {
+          'date': 1
+        }
     }, {
       '$project': {
         '_id': 0, 
@@ -1121,7 +1126,7 @@ app.get("/api/races/allRaceWins/:id", async (req: Request, res: Response) => {
         'position': '$risultati.position'
       }
     }
-  ];
+  ];  
   
   
 
