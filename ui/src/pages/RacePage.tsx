@@ -168,7 +168,7 @@ export default function RacePage() {
 							</td>
 						</table>
 
-						<div className="page-container"></div>
+						<div className="page-container">
 						{leaderboard ? (
 							<LeaderboardTable drivers={leaderboard} />
 						) : (
@@ -186,6 +186,8 @@ export default function RacePage() {
 						) : (
 							"No data"
 						)}
+						</div>
+						
 					</div>
 				</>
 			) : (
