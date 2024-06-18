@@ -12,11 +12,9 @@ import DriversPage from "./pages/DriversPage";
 import RacePage from "./pages/RacePage";
 import RacesPage from "./pages/RacesPage";
 
-import ConstructorPage from "./pages/ConstructorPage";
-import ConstructorsPage from "./pages/ConstructorsPage";
-
 import CircuitPage from "./pages/CircuitPage";
 import CircuitsPage from "./pages/CircuitsPage";
+import HallOfFamePage from "./pages/HallOfFamePage";
 
 const router = createBrowserRouter([
 	{
@@ -41,12 +39,8 @@ const router = createBrowserRouter([
 		element: <RacePage />,
 	},
 	{
-		path: "/constructors",
-		element: <ConstructorsPage />,
-	},
-	{
-		path: "/constructors/:id",
-		element: <ConstructorPage />,
+		path: "/hof",
+		element: <HallOfFamePage />,
 	},
 	{
 		path: "/circuits",

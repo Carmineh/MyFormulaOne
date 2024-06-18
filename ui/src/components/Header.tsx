@@ -31,13 +31,13 @@ export default function Header() {
 							</a>
 						</li>
 						<li className="nav-item">
-							<a className="nav-link" href="/constructors">
-								CONSTRUCTORS
+							<a className="nav-link" href="/races">
+								RACES
 							</a>
 						</li>
 						<li className="nav-item">
-							<a className="nav-link" href="/races">
-								RACES
+							<a className="nav-link" href="/hof">
+								HALL OF FAME
 							</a>
 						</li>
 					</ul>

@@ -32,9 +32,7 @@ const LeaderboardTable: React.FC<LeaderboardInterface> = ({ drivers }) => {
 						<tr key={driver.driverId} className="Table">
 							{driver.position <= 30 ? <td>{driver.position}</td> : <td>NC</td>}
 
-							<td className="profile-page__button">
-								<a href={"/drivers/" + driver.driverId}>{driver.driverName}</a>
-							</td>
+							<td>{driver.driverName}</td>
 
 							<td>{driver.car}</td>
 
