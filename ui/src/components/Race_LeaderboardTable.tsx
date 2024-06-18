@@ -13,7 +13,7 @@ interface LeaderboardInterface {
 	drivers: RaceLeaderboard[];
 }
 
-const RaceTable: React.FC<LeaderboardInterface> = ({ drivers }) => {
+const LeaderboardTable: React.FC<LeaderboardInterface> = ({ drivers }) => {
 	return (
 		<>
 			<table className="table table-striped">
@@ -57,4 +57,4 @@ const RaceTable: React.FC<LeaderboardInterface> = ({ drivers }) => {
 	);
 };
 
-export default RaceTable;
+export default LeaderboardTable;

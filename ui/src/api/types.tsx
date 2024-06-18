@@ -69,6 +69,16 @@ export interface RaceLeaderboard {
 }
 
 export interface FastestRoundRace {
+	driverName: string;
+	bestLapTime: string;
+	fastestLap: number;
+	driverId: number;
+	raceId: number;
+	avgSpeed: number;
+	car: string;
+}
+
+export interface FastestRoundQualRace {
 	raceId: number;
 	position: number;
 	driver: string;
@@ -76,14 +86,6 @@ export interface FastestRoundRace {
 	q1: string;
 	q2: string;
 	q3: string;
-	raceName: string;
-	data: Date;
-}
-
-export interface FastestRoundQualRace {
-	raceId: number;
-	fastestTime: string;
-	driverName: string;
 	raceName: string;
 	data: Date;
 }

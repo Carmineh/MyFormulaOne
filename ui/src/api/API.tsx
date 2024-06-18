@@ -110,20 +110,20 @@ export const fetchLeaderboard_byIdRace = async (
 
 export const fetchFastestRTime_byIdRace = async (
 	id: string
-): Promise<FastestRoundRace> => {
+): Promise<FastestRoundRace[]> => {
 	const response = await axios.get(
 		"http://localhost:3001/api/results/bestlaprace/" + id
 	);
-	return response.data[0];
+	return response.data;
 };
 
 export const fetchFastestQTime_byIdRace = async (
 	id: string
-): Promise<FastestRoundQualRace> => {
+): Promise<FastestRoundQualRace[]> => {
 	const response = await axios.get(
 		"http://localhost:3001/api/qualifying/bestlap/" + id
 	);
-	return response.data[0];
+	return response.data;
 };
 
 export const fetchFastestQTimeEver_byIdCircuit = async (
@@ -177,4 +177,3 @@ export const fetchRacesWin_byIdDriver = async (
 	);
 	return response.data;
 };
-

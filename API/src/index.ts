@@ -489,51 +489,65 @@ app.get("/api/results/bestlaprace/:id", async (req: Request, res: Response) => {
     const raceId = parseInt(req.params.id); // Qui dobbiamo passare l'id del driver
 
     const agg = [
-        {
-          '$match': {
-            'raceId': raceId, 
-            'fastestLapTime': {
-              '$exists': true, 
-              '$ne': null, 
-              '$nin': [
-                '\\N'
-              ]
-            }
-          }
-        }, {
-          '$sort': {
-            'fastestLapTime': 1
-          }
-        }, {
-          '$limit': 1
-        }, {
-          '$lookup': {
-            'from': 'drivers', 
-            'localField': 'driverId', 
-            'foreignField': 'driverId', 
-            'as': 'driverDetails'
-          }
-        }, {
-          '$unwind': {
-            'path': '$driverDetails', 
-            'includeArrayIndex': 'index', 
-            'preserveNullAndEmptyArrays': true
-          }
-        }, {
-          '$project': {
-            '_id': 0, 
-            'bestLapTime': '$fastestLapTime', 
-            'driverName': {
-              '$concat': [
-                '$driverDetails.forename', ' ', '$driverDetails.surname'
-              ]
-            }, 
-            'driverId': '$driverId', 
-            'raceId': '$raceId', 
-            'fastestLap': '$fastestLap'
+      {
+        '$match': {
+          'raceId': raceId, 
+          'fastestLapTime': {
+            '$exists': true, 
+            '$ne': null, 
+            '$nin': [
+              'N'
+            ]
           }
         }
-      ];
+      }, {
+        '$sort': {
+          'fastestLapTime': 1
+        }
+      }, {
+        '$lookup': {
+          'from': 'drivers', 
+          'localField': 'driverId', 
+          'foreignField': 'driverId', 
+          'as': 'driverDetails'
+        }
+      }, {
+        '$unwind': {
+          'path': '$driverDetails', 
+          'includeArrayIndex': 'index', 
+          'preserveNullAndEmptyArrays': true
+        }
+      }, {
+        '$lookup': {
+          'from': 'constructors', 
+          'localField': 'constructorId', 
+          'foreignField': 'constructorId', 
+          'as': 'costruttore'
+        }
+      }, {
+        '$unwind': {
+          'path': '$costruttore', 
+          'includeArrayIndex': 'index', 
+          'preserveNullAndEmptyArrays': true
+        }
+      }, {
+        '$project': {
+          '_id': 0, 
+          'driverName': {
+            '$concat': [
+              '$driverDetails.forename', ' ', '$driverDetails.surname'
+            ]
+          }, 
+          'bestLapTime': '$fastestLapTime', 
+          'fastestLap': '$fastestLap', 
+          'driverId': '$driverId', 
+          'raceId': '$raceId', 
+          'avgSpeed': '$fastestLapSpeed', 
+          'car': '$costruttore.name'
+        }
+      }
+    ];
+    
     database.collection("results").aggregate(agg).toArray((error, result) => {
         if (!error && result != null) {
             res.send(result);

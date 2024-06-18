@@ -11,7 +11,7 @@ const RaceTable: React.FC<RaceTableInterface> = ({ races }) => {
 	const [currentPage, setCurrentPage] = useState(0);
 	const itemsPerPage = 15;
 
-	races.sort((a, b) => b.year - a.year); //ANNO CRESCENTE
+	races.sort((a, b) => b.year - a.year);
 
 	const nextPage = () => {
 		if (currentPage < Math.ceil(races.length / itemsPerPage) - 1) {

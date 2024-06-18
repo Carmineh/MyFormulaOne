@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import { Constructor } from "../api/types";
 import { fetchConstructors_byId } from "../api/API";
 import Loading from "../components/Loading";
+import FlagDisplay from "../components/Flag";
 
 export default function ConstructorPage() {
 	const id: string = useParams().id ?? "";
@@ -16,7 +17,6 @@ export default function ConstructorPage() {
 	useEffect(() => {
 		const getConstructor = async () => {
 			try {
-				console.log("SONO IN GETCONSTRUCTOR");
 				const result = await fetchConstructors_byId(id);
 				setConstructor(result);
 				setLoading(false);
@@ -42,7 +42,11 @@ export default function ConstructorPage() {
 		<>
 			<Header />
 			<h1>CONSTRUCTOR {id}</h1>
-			<pre>{JSON.stringify(constructor, null, 2)}</pre>
+			{constructor ? (
+				<FlagDisplay nationality={constructor?.nationality} />
+			) : (
+				"NO FLAG"
+			)}
 		</>
 	);
 }

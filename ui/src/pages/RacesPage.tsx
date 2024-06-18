@@ -35,7 +35,6 @@ export default function RacesPage() {
 	if (error) return <p>{error.message}</p>;
 
 	return (
-		// TODO: ORDINARE PER DATA
 		<>
 			<Header />
 			<Table races={races} />

@@ -4,7 +4,6 @@ import "./Pages.css";
 import Header from "../components/Header";
 import {
 	fetchCircuits_byId,
-	fetchDrivers_byId,
 	fetchFastestQTime_byIdRace,
 	fetchFastestRTime_byIdRace,
 	fetchLeaderboard_byIdRace,
@@ -13,7 +12,6 @@ import {
 
 import {
 	Circuit,
-	Driver,
 	FastestRoundQualRace,
 	FastestRoundRace,
 	Race,
@@ -21,8 +19,10 @@ import {
 } from "../api/types";
 
 import ImagePortrait from "../components/ImagePortrait";
-import Table from "../components/LeaderboardTable";
+import LeaderboardTable from "../components/Race_LeaderboardTable";
 import Loading from "../components/Loading";
+import QualTable from "../components/Race_BestQualTable";
+import LapsTable from "../components/Race_BestLapTable";
 
 export default function RacePage() {
 	const id: string = useParams().id ?? "";
@@ -30,8 +30,9 @@ export default function RacePage() {
 	const [race, setRace] = useState<Race>();
 	const [circuit, setCircuit] = useState<Circuit>();
 	const [leaderboard, setLeaderboard] = useState<RaceLeaderboard[]>();
-	const [fastestLapRace, setFastestLapRace] = useState<FastestRoundRace>();
-	const [fastestLapQual, setFastestLapQual] = useState<FastestRoundQualRace>();
+	const [fastestLapRace, setFastestLapRace] = useState<FastestRoundRace[]>();
+	const [fastestLapQual, setFastestLapQual] =
+		useState<FastestRoundQualRace[]>();
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<Error | null>(null);
 
@@ -168,45 +169,28 @@ export default function RacePage() {
 						</table>
 
 						<div className="page-container"></div>
-						{leaderboard ? <Table drivers={leaderboard} /> : "No data"}
-
-						{/* TODO: IMPLEMENTARE GIRO VELOCE IN GARA E QUALIFICHE (IMPOSTARE ANCHE CSS PAGINA) */}
+						{leaderboard ? (
+							<LeaderboardTable drivers={leaderboard} />
+						) : (
+							"No data"
+						)}
+						{fastestLapRace ? (
+							<>
+								<LapsTable drivers={fastestLapRace} />
+							</>
+						) : (
+							"No data"
+						)}
+						{fastestLapRace ? (
+							<QualTable drivers={fastestLapQual} />
+						) : (
+							"No data"
+						)}
 					</div>
 				</>
 			) : (
 				<> {error} </>
 			)}
-			{/* {race ? (
-				<>
-					<pre>{JSON.stringify(race, null, 2)}</pre>
-				</>
-			) : (
-				" Race not found"
-			)}
-			{circuit ? (
-				<>
-					<h2>Circuit</h2>
-					<pre>{JSON.stringify(circuit, null, 2)}</pre>
-				</>
-			) : (
-				"No data"
-			)}
-			{fastestLapQual ? (
-				<>
-					<h2>Fastest Lap Qualification</h2>
-					<pre>{JSON.stringify(fastestLapQual, null, 2)}</pre>
-				</>
-			) : (
-				"No data"
-			)}
-			{fastestLapRace ? (
-				<>
-					<h2>Fastest Lap Race</h2>
-					<pre>{JSON.stringify(fastestLapRace, null, 2)}</pre>
-				</>
-			) : (
-				"No data"
-			)} */}
 		</>
 	);
 }
