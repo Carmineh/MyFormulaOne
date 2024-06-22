@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import { useParams } from "react-router-dom";
 import { fetchCircuits_byId } from "../api/API";
-import { fetchCircuitWins_byIdCircuit } from "../api/API";
-import { Circuit, HallOfFame } from "../api/types";
+import { fetchCircuitWins_byIdCircuit, fetchFastestQTimeEver_byIdCircuit, fetchFastestRTimeEver_byIdCircuit } from "../api/API";
+import { Circuit, HallOfFame, FastestRoundQualCircuit, FastestRoundCircuit } from "../api/types";
 import ImagePortrait from "../components/ImagePortrait";
 import HallOfFameTable from "../components/HallOfFameTable";
 import Loading from "../components/Loading";
@@ -17,6 +17,8 @@ export default function CircuitPage() {
 
 	const [circuit, setCircuit] = useState<Circuit | null>(null);
 	const [HallOfFame, setHallOfFame] = useState<HallOfFame[]>();
+	const [fastestLapRace, setFastestLapRace] = useState<FastestRoundCircuit>();
+	const [fastestLapQual, setFastestLapQual] = useState<FastestRoundQualCircuit>();
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<Error | null>(null);
 
@@ -42,8 +44,32 @@ export default function CircuitPage() {
 				setLoading(false);
 			}
 		};
+
+		const getFastestLapRace = async () => {
+			try {
+				const result = await fetchFastestRTimeEver_byIdCircuit(id);
+				setFastestLapRace(result);
+			} catch (error) {
+				setError(error as Error);
+				setLoading(false);
+			}
+		};
+
+		const getFastestLapQual = async () => {
+			try {
+				setLoading(true);
+				const result = await fetchFastestQTimeEver_byIdCircuit(id);
+				setFastestLapQual(result);
+				setLoading(false);
+			} catch (error) {
+				setError(error as Error);
+				setLoading(false);
+			}
+		};
 		getHallOfFame();
 		getCircuit();
+		getFastestLapQual();
+		getFastestLapRace();
 	}, [id]);
 
 	if (loading)
@@ -75,6 +101,14 @@ export default function CircuitPage() {
 										? circuit.location + ", " + circuit.country
 										: "Nessun dato disponibile"}{" "}
 								</h3>
+							</div>
+							<div className="race-info__item">
+								<img src="/assets/pole-position.png" alt="" className="icon" />
+								<h3>{fastestLapQual ? fastestLapQual.fastestQualifyingTime + " Giro veloce in qualifica" : "Nessun dato disponibile"}</h3>
+							</div>
+							<div className="race-info__item">
+								<img src="/assets/lap-time.png" alt="" className="icon" />
+								<h3>{fastestLapRace ? fastestLapRace.fastestLapTime + " Giro veloce in gara" : "Nessun dato disponibile"}</h3>
 							</div>
 						</div>
 					</td>
