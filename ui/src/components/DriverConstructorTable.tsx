@@ -24,7 +24,10 @@ const DriverTable: React.FC<ConstructorTableInterface> = ({ constructors }) => {
 	};
 
 	const startIndex = currentPage * itemsPerPage;
-	const selectedData = constructors.slice(startIndex, startIndex + itemsPerPage);
+	const selectedData = constructors.slice(
+		startIndex,
+		startIndex + itemsPerPage
+	);
 	const lastIndex = Math.min(startIndex + itemsPerPage, constructors.length);
 
 	return (
@@ -42,7 +45,9 @@ const DriverTable: React.FC<ConstructorTableInterface> = ({ constructors }) => {
 				<tbody>
 					{selectedData.map((item, index) => (
 						<tr key={item.constructorId} className="Table">
-							<th scope="row">{lastIndex <= 15 ? index : index + lastIndex}</th>
+							<th scope="row">
+								{lastIndex <= 15 ? index : startIndex + index}
+							</th>
 							<td>{item.constructorName}</td>
 							<td>{item.constructorNationality}</td>
 						</tr>

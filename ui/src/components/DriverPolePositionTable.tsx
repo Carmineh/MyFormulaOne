@@ -34,7 +34,7 @@ const DriverTable: React.FC<DriverPolesInterface> = ({ DriverPoles }) => {
 					<tr>
 						<th scope="col">#</th>
 						<th scope="col">Nome gara</th>
-                        <th scope="col">Data gara</th>
+						<th scope="col">Data gara</th>
 						<th scope="col"></th>
 					</tr>
 				</thead>
@@ -42,9 +42,11 @@ const DriverTable: React.FC<DriverPolesInterface> = ({ DriverPoles }) => {
 				<tbody>
 					{selectedData.map((item, index) => (
 						<tr key={item.driverId} className="Table">
-							<th scope="row">{lastIndex <= 15 ? index : index + lastIndex}</th>
-                            <td>{item.raceName}</td>
-                            <td>{item.raceDate}</td>
+							<th scope="row">
+								{lastIndex <= 15 ? index : startIndex + index}
+							</th>
+							<td>{item.raceName}</td>
+							<td>{item.raceDate}</td>
 						</tr>
 					))}
 				</tbody>

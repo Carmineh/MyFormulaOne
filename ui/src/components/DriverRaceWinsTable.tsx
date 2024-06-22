@@ -24,8 +24,14 @@ const DriverTable: React.FC<RaceWinsForDrivers> = ({ RaceWinsForDriver }) => {
 	};
 
 	const startIndex = currentPage * itemsPerPage;
-	const selectedData = RaceWinsForDriver.slice(startIndex, startIndex + itemsPerPage);
-	const lastIndex = Math.min(startIndex + itemsPerPage, RaceWinsForDriver.length);
+	const selectedData = RaceWinsForDriver.slice(
+		startIndex,
+		startIndex + itemsPerPage
+	);
+	const lastIndex = Math.min(
+		startIndex + itemsPerPage,
+		RaceWinsForDriver.length
+	);
 
 	return (
 		<>
@@ -34,7 +40,7 @@ const DriverTable: React.FC<RaceWinsForDrivers> = ({ RaceWinsForDriver }) => {
 					<tr>
 						<th scope="col">#</th>
 						<th scope="col">Nome gara</th>
-                        <th scope="col">Data gara</th>
+						<th scope="col">Data gara</th>
 						<th scope="col"></th>
 					</tr>
 				</thead>
@@ -42,9 +48,11 @@ const DriverTable: React.FC<RaceWinsForDrivers> = ({ RaceWinsForDriver }) => {
 				<tbody>
 					{selectedData.map((item, index) => (
 						<tr key={item.driverId} className="Table">
-							<th scope="row">{lastIndex <= 15 ? index : index + lastIndex}</th>
+							<th scope="row">
+								{lastIndex <= 15 ? index : startIndex + index}
+							</th>
 							<td>{item.granPrix}</td>
-                            <td>{item.date}</td>
+							<td>{item.date}</td>
 						</tr>
 					))}
 				</tbody>

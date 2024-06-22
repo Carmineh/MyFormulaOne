@@ -5,6 +5,7 @@ import Table from "../components/DriverTable";
 import { Driver } from "../api/types";
 import { fetchDrivers_all } from "../api/API";
 import Loading from "../components/Loading";
+import Footer from "../components/Footer";
 
 export default function DriversPage() {
 	const [drivers, setDrivers] = useState<Driver[]>([]);
@@ -39,6 +40,7 @@ export default function DriversPage() {
 		<>
 			<Header />
 			<Table drivers={drivers} />
+			<Footer />
 		</>
 	);
 }

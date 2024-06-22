@@ -11,7 +11,6 @@ body{
 }
 
 .container{
-    border: 2px solid blue;
     max-width: 1500px;
     margin: auto;
 }
@@ -79,3 +78,24 @@ body{
     box-shadow: rgb(0,0,0,0.3) 2px 2px 2px;
 }
   
+
+/*
+    CSS HOMEPAGE
+*/
+.homepage__buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.homepage__buttons_col{
+    border: 2px solid red;
+    
+}
+
+.homepage__buttons__div{
+    width: 700px;
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

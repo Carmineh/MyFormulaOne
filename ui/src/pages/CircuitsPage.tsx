@@ -6,6 +6,7 @@ import { Circuit } from "../api/types";
 import { fetchCircuits_all } from "../api/API";
 import { useResolvedPath } from "react-router-dom";
 import Loading from "../components/Loading";
+import Footer from "../components/Footer";
 
 export default function CircuitsPage() {
 	const [circuits, setCircuits] = useState<Circuit[]>([]);
@@ -40,6 +41,7 @@ export default function CircuitsPage() {
 		<>
 			<Header />
 			<Table circuits={circuits} />
+			<Footer />
 		</>
 	);
 }

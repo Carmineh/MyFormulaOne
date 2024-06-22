@@ -43,7 +43,9 @@ const DriverTable: React.FC<DriverTableInterface> = ({ drivers }) => {
 				<tbody>
 					{selectedData.map((item, index) => (
 						<tr key={item.driverId} className="Table">
-							<th scope="row">{lastIndex <= 15 ? index : index + lastIndex}</th>
+							<th scope="row">
+								{lastIndex <= 15 ? index : startIndex + index}
+							</th>
 							<td>{item.forename}</td>
 							<td>{item.surname}</td>
 							<td>{item.nationality}</td>

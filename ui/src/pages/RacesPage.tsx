@@ -5,6 +5,7 @@ import { Race } from "../api/types";
 import Table from "../components/RaceTable";
 import { useState } from "react";
 import Loading from "../components/Loading";
+import Footer from "../components/Footer";
 
 export default function RacesPage() {
 	const [races, setRaces] = useState<Race[]>([]);
@@ -38,6 +39,7 @@ export default function RacesPage() {
 		<>
 			<Header />
 			<Table races={races} />
+			<Footer />
 		</>
 	);
 }

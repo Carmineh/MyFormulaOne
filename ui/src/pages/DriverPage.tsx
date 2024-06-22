@@ -4,15 +4,22 @@ import { useParams } from "react-router-dom";
 import { fetchDrivers_byId } from "../api/API";
 import { fetchConstructorForDriver_byId } from "../api/API";
 import { fetchPolePosition_byId } from "../api/API";
-import { fetchRacesWin_byIdDriver} from "../api/API";
-import { fetchNumberRacesWin_byIdDriver} from "../api/API";
-import { ConstructorsForDriver, Driver, DriverPoles, RaceWinsForDriver, totalNumberWinsForDriver } from "../api/types";
+import { fetchRacesWin_byIdDriver } from "../api/API";
+import { fetchNumberRacesWin_byIdDriver } from "../api/API";
+import {
+	ConstructorsForDriver,
+	Driver,
+	DriverPoles,
+	RaceWinsForDriver,
+	totalNumberWinsForDriver,
+} from "../api/types";
 import ImagePortrait from "../components/ImagePortrait";
 import Table from "../components/DriverConstructorTable";
 import Pole from "../components/DriverPolePositionTable";
 import Race from "../components/DriverRaceWinsTable";
 import Loading from "../components/Loading";
 import "./Pages.css";
+import Footer from "../components/Footer";
 
 export default function DriverPage() {
 	const id: string = useParams().id ?? "";
@@ -29,6 +36,7 @@ export default function DriverPage() {
 	useEffect(() => {
 		const getDriver = async () => {
 			try {
+				setLoading(true);
 				const result = await fetchDrivers_byId(id);
 				setDriver(result);
 				setLoading(false);
@@ -39,6 +47,7 @@ export default function DriverPage() {
 		};
 		const getDriverConstructor = async () => {
 			try {
+				setLoading(true);
 				const result = await fetchConstructorForDriver_byId(id);
 				setConstructor(result);
 				setLoading(false);
@@ -50,6 +59,7 @@ export default function DriverPage() {
 
 		const getDriverPole = async () => {
 			try {
+				setLoading(true);
 				const result = await fetchPolePosition_byId(id);
 				const formattedResult = result.map((race: any) => {
 					const [year, month, day] = race.raceDate.split("T")[0].split("-");
@@ -65,6 +75,7 @@ export default function DriverPage() {
 
 		const getDriverWins = async () => {
 			try {
+				setLoading(true);
 				const result = await fetchRacesWin_byIdDriver(id);
 				const formattedResult = result.map((race: any) => {
 					const [year, month, day] = race.date.split("T")[0].split("-");
@@ -80,6 +91,7 @@ export default function DriverPage() {
 
 		const getNumberWins = async () => {
 			try {
+				setLoading(true);
 				const result = await fetchNumberRacesWin_byIdDriver(id);
 				setNumberWins(result);
 				setLoading(false);
@@ -95,7 +107,6 @@ export default function DriverPage() {
 		getDriverWins();
 		getNumberWins();
 	}, [id]);
-
 	if (loading)
 		return (
 			<>
@@ -109,60 +120,87 @@ export default function DriverPage() {
 		<>
 			<Header />
 			<div className="container">
-			
 				<h1 className="centered title">
 					{driver?.forename} {driver?.surname}
 				</h1>
 
 				<table className="centered">
 					<td className="race-info_col">
-						{driver ? (<ImagePortrait url={driver.url} type="driver" />) : (" Driver not found")}
+						{driver ? (
+							<ImagePortrait url={driver.url} type="driver" />
+						) : (
+							" Driver not found"
+						)}
 					</td>
-				
+
 					<td className="race-info_col">
 						<div className="race-info">
 							<div className="race-info__item">
 								<img src="/assets/vittoria.png" alt="" className="icon" />
-								<h3> {numberWins ? numberWins.winCount + " Vittorie": "Nessun dato disponibile"}</h3>
+								<h3>
+									{" "}
+									{numberWins
+										? numberWins.winCount + " Vittorie"
+										: "Nessun dato disponibile"}
+								</h3>
 							</div>
 							<div className="race-info__item">
 								<img src="/assets/pole-position.png" alt="" className="icon" />
-								<h3>{pole && pole.length > 0 ? pole[0].totalPoles + " PolePosition" : "Nessun dato disponibile"}</h3>
+								<h3>
+									{pole && pole.length > 0
+										? pole[0].totalPoles + " PolePosition"
+										: "Nessun dato disponibile"}
+								</h3>
 							</div>
 						</div>
 					</td>
 				</table>
 
 				<div className="page-container">
-					<h2>Scuderie per cui ha corso</h2>
 					{constructor ? (
-						<Table constructors={constructor} />
+						<>
+							<h2>Scuderie per cui ha corso</h2>{" "}
+							<Table constructors={constructor} />
+						</>
 					) : (
-						"Sto caricando"
+						""
 					)}
 
 					<div className="results-toggle">
-						<button onClick={() => setShowRace(true)} className={showRace ? "active" : ""}>
+						<button
+							onClick={() => setShowRace(true)}
+							className={showRace ? "active" : ""}
+						>
 							Mostra Risultati Gara
 						</button>
-						<button onClick={() => setShowRace(false)} className={!showRace ? "active" : ""}>
+						<button
+							onClick={() => setShowRace(false)}
+							className={!showRace ? "active" : ""}
+						>
 							Mostra Tabella Qualifica
 						</button>
 					</div>
 
 					{showRace ? (
 						<>
-							<h2>Gare vinte</h2>
-							{wins ? <Race RaceWinsForDriver={wins} /> : "Sto caricando"}
+							{wins ? (
+								<>
+									<h2>Gare vinte</h2>
+									<Race RaceWinsForDriver={wins} />{" "}
+								</>
+							) : (
+								<Loading />
+							)}
 						</>
 					) : (
 						<>
 							<h2>Pole Position</h2>
-							{pole ? <Pole DriverPoles={pole} /> : "Sto caricando"}
+							{pole ? <Pole DriverPoles={pole} /> : ""}
 						</>
 					)}
 				</div>
 			</div>
+			<Footer />
 		</>
 	);
 }

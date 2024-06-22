@@ -43,7 +43,9 @@ const CircuitTable: React.FC<CircuitTableInterface> = ({ circuits }) => {
 				<tbody>
 					{selectedData.map((item, index) => (
 						<tr key={item.circuitId} className="Table">
-							<th scope="row">{lastIndex <= 15 ? index : index + lastIndex}</th>
+							<th scope="row">
+								{lastIndex <= 15 ? index : startIndex + index}
+							</th>
 							<td>{item.name}</td>
 							<td>{item.country}</td>
 							<td>{item.location}</td>

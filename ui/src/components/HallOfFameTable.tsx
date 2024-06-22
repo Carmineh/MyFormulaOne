@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { HallOfFame} from "../api/types";
+import { HallOfFame } from "../api/types";
 
 import "./Table.css";
 
@@ -32,17 +32,18 @@ const CircuitTable: React.FC<AllVictories> = ({ HallOfFame }) => {
 			<table className="table table-striped">
 				<thead>
 					<tr>
-						<th scope="col">#</th>
+						<th scope="col">Position</th>
 						<th scope="col">Vittorie</th>
 						<th scope="col">Nome Pilota</th>
-						<th scope="col"></th>
 					</tr>
 				</thead>
 
 				<tbody>
 					{selectedData.map((item, index) => (
 						<tr key={item.driverId} className="Table">
-							<th scope="row">{lastIndex <= 15 ? index : index + lastIndex}</th>
+							<th scope="row">
+								{lastIndex <= 15 ? index : index + startIndex}
+							</th>
 							<td>{item.winCount}</td>
 							<td>{item.driverName}</td>
 						</tr>

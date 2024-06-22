@@ -43,11 +43,13 @@ const RaceTable: React.FC<RaceTableInterface> = ({ races }) => {
 				<tbody>
 					{selectedData.map((item, index) => (
 						<tr key={item.raceId} className="Table">
-							<th scope="row">{lastIndex <= 15 ? index : index + lastIndex}</th>
+							<th scope="row">
+								{lastIndex <= 15 ? index : startIndex + index}
+							</th>
 							<td>{item.name}</td>
 							<td>{item.year}</td>
 							<td className="profile-page__button">
-								<a href={"http://localhost:5173/races/" + item.raceId}>INFO</a>
+								<a href={"/races/" + item.raceId}>INFO</a>
 							</td>
 						</tr>
 					))}

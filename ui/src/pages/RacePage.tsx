@@ -24,6 +24,7 @@ import Loading from "../components/Loading";
 import QualTable from "../components/Race_BestQualTable";
 import LapsTable from "../components/Race_BestLapTable";
 import "./Pages.css";
+import Footer from "../components/Footer";
 
 export default function RacePage() {
 	const id: string = useParams().id ?? "";
@@ -212,6 +213,7 @@ export default function RacePage() {
 			) : (
 				<> {error} </>
 			)}
+			<Footer />
 		</>
 	);
 }
