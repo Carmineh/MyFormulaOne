@@ -86,16 +86,134 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 100px;
 }
 .homepage__buttons_col{
-    border: 2px solid red;
-    
 }
 
 .homepage__buttons__div{
-    width: 700px;
-    height: 400px;
+    width: inherit;
+    height: 200px;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.homepage__buttons__div:hover{
+    cursor: pointer;
+}
+
+.homepage__buttons__div {
+    position: relative;
+    overflow: hidden;
+    width: 375px;
+    height: 250px;
+    
+}
+
+.homepage__buttons__div img {
+    width: 100%;
+    height: 100%;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.homepage__buttons__div::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.homepage__buttons__div:hover img {
+    transform: scale(1.1);
+    filter: brightness(70%);
+}
+
+.homepage__buttons__div:hover::after {
+    opacity: 1;
+}
+
+.homepage__hero-section{
+    width: 100%;
+    height: 500px;
+    background-image: url("../assets/homepage.jpg");
+    background-position: center;
+    background-size: cover;
+}
+
+.c1_1{
+    border-radius: 7px;
+    border-top: 5px solid red;
+    border-left: 5px solid red;
+    margin-right: 70px;
+}
+
+.c1_1:hover{
+    border: 0px solid red;
+}
+
+.c1_2{
+    border-radius: 7px;
+    border-top: 5px solid red;
+    border-right: 5px solid red;
+}
+
+.c1_2:hover{
+    border: 0px solid red;
+}
+
+.c2_1{ 
+    border-radius: 7px;
+    border-bottom: 5px solid red;
+    border-left: 5px solid red;
+    margin-top: 70px;
+}
+
+.c2_1:hover{
+    border: 0px solid red;
+}
+
+.c2_2{
+    border-radius: 7px;
+    border-bottom: 5px solid red;
+    border-right: 5px solid red;
+    margin-top: 70px;
+}
+
+.c2_2:hover{
+    border: 0px solid red;
+}
+
+
+
+.c1_1 img{
+    padding: 5px;
+}
+
+.c1_2 img{
+    padding: 5px;
+}
+
+.c2_1 img{
+    padding: 5px;
+}
+
+.c2_2 img{
+    padding: 5px;
+}
+
+.text-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-family: 'Lobster', cursive; /* Font personalizzato da Google Fonts */
+    font-size: 24px;
+    text-align: center;
 }
